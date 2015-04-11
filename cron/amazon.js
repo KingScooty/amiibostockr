@@ -1,95 +1,111 @@
-var amazon = require('amazon-product-api');
+var amazonAPI = require('amazon-product-api');
 var util = require('util');
 var Promise = require('bluebird');
-
-// 4.5 calls per UK
-// 3 calls per US
-// = 7.5 calls.
+var flattenJSON = require('./utils').flattenJSON;
+var r = require('./redis');
 
 var settings = require('../app/settings');
-var amazonLocale = {};
+
+var amazon = {};
+amazon.locale = {};
+amazon.clients = {};
 
 /**
  * Load in the required files based on the locale settings in app
  * e.g. UK, US
  */ 
 
-settings.locales.forEach(function(el, index, array) {
-  amazonLocale[el] = require('./' + el);
-});
+settings.locales.forEach(function(locale, index, array) {
+  amazon.locale[locale] = require('./' + locale);
+}); 
 
-var clients = {};
-var r = require('./redis');
+/**
+ * Bootstrap the settings in order to query the correct
+ * chunk of product ID's for that locale.
+ */
 
+function bootstrap_settings (locale, idChunkIndex) {
 
-function queryAmazon() {
+  return {
+    idType: 'ASIN',
+    Condition: 'New',
+    includeReviewsSummary: false,
+    itemId: amazon.locale[locale].ids[idChunkIndex].toString(),
+    // responseGroup: 'ItemAttributes,Offers,Images',
+    domain: amazon.locale[locale].domain
+  }
 
-  Object.keys(amazonLocale).forEach(function(key, index, array) {
+}
 
-    var key = key;
+function createClients (locale) {
+  amazon.clients[locale] = amazonAPI.createClient(amazon.locale[locale].credentials);
+}
+
+function queryAmazon (locale, idChunkIndex) {
+
+  var products = amazon.locale[locale].ids;
+
+  /**
+   * Wait for all promises to complete.
+   */
+
+  Promise.all(products.map(function(key, idChunkIndex, array) {
 
     /**
-     * Creates a client from credentials
-     * Need one of these for each locale
-     */
-    clients[key] = amazon.createClient(amazonLocale[key].credentials);
-
-    /**
-     * Lookup settings object needs to be built/bootstrapped.
-     * It needs to be generated 4 times for UK, and 3 for US
-     * Quantity is determined by number of ID chunks per locale.
+     * Create new promise and query Amazon based on the 10 product
+     * id json chunk.
      */
 
-    /**
-     * Analyse ID chunks in locale.
-     */
-
-    amazonLocale[key].ids.forEach(function(el, index, array) {
-
-      var thisIndex = index;
-
-      var lookUpSettings = {
-        idType: 'ASIN',
-        Condition: 'New',
-        includeReviewsSummary: false,
-        itemId: amazonLocale[key].ids[index].toString(),
-        // responseGroup: 'ItemAttributes,Offers,Images',
-        domain: amazonLocale[key].domain
-      }
-
-      /**
-       * Run lookup for each ID chunk.
-       */
-
-      clients[key].itemLookup(lookUpSettings, 
+    return new Promise(function (resolve, reject) {
+      amazon.clients[locale]
+      .itemLookup(bootstrap_settings(locale, idChunkIndex), 
         function(err, results) {
-        
-        if (err) {
-          console.log(util.inspect(err, false, null));
-        } else {
-
-          // Save to Redis with the locale as key
-          /** 
-           * Need to be able to return a promise here, once the data is placed 
-           * somewhere.
-           */ 
-
-           console.log(util.inspect(results, false, null));
-           console.log(',');
-
-/* 
-          console.log(key + thisIndex);
-          r.set(key + thisIndex, JSON.stringify(results), function(err, reply) {
-            console.log(reply);
-          });
-*/
+        if (err) { reject(err); } 
+        else {
+          resolve(results);
         }
       });
     });
 
+  }))
+
+  /**
+   * Flatten the results, to break the chunks into one
+   */
+
+  .then(function (results) {
+    return flattenJSON(results, locale);
+  })
+
+ /**
+   * Store the result in Redis.
+   */
+
+  .then(function(flattenedResult) {
+    saveToRedis(locale, flattenedResult)
+  })
+
+  /**
+   * Catch all errors
+   */
+
+  .catch(function (error) {
+    console.log('Error querying Amazon - ', error);
   });
-
 }
-// queryAmazon();
-module.exports = queryAmazon;
 
+function saveToRedis (locale, flattenedResult) {
+  return new Promise(function (resolve, reject) {
+    r.set(locale, flattenedResult, function(err, reply) {
+      if (err) { reject(err) } 
+      else {
+        resolve(reply);
+      }
+    });
+  });
+}
+
+createClients('UK');
+queryAmazon('UK');
+
+module.exports = amazon;
