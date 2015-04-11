@@ -33,9 +33,16 @@ var ids = {
   'B00O92ONBM': false
 };
 
-var domain = 'webservices.amazon.com'
+var credentials = {
+  awsId: process.env.AWSIDUS,
+  awsSecret: process.env.AWSSECRETUS,
+  awsTag: 'kings0b-21'
+};
+
+var domain = 'webservices.amazon.com';
 
 module.exports = {
   ids: _.chunk(Object.keys(ids), 10),
-  domain: domain
+  domain: domain,
+  credentials: credentials
 }

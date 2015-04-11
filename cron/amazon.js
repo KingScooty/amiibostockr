@@ -11,18 +11,27 @@ var client = amazon.createClient({
 var UK = require('./uk');
 var US = require('./us');
 
-// console.log(UK.ids[2].toString());
+console.log(UK.ids[2].toString());
 
-client.itemLookup({
+// console.log((UK.ids[1].toString()));
+
+var lookUpSettings = {
   idType: 'ASIN',
   Condition: 'New',
   includeReviewsSummary: false,
-  // itemId: 'B00N4ABMUA',
-  itemId: UK.ids[1].toString(),
+  itemId: (UK.ids[1].toString()),
   responseGroup: 'ItemAttributes,Offers,Images',
-  // domain: 'webservices.amazon.com'
   domain: UK.domain
-}, function(err, results) {
+}
+
+console.log('');
+console.log('ITEM IDS:');
+console.log(lookUpSettings.itemId);
+console.log('');
+
+
+client.itemLookup(lookUpSettings, 
+  function(err, results) {
   if (err) {
     console.log(util.inspect(err, false, null));
   } else {
@@ -33,11 +42,3 @@ client.itemLookup({
 // 4.5 calls per UK
 // 3 calls per US
 // = 7.5 calls.
-
-var Amazon = function (meta) {
-  var client = amazon.createClient({
-    awsId: 
-  })
-}
-
-module.exports = Amazon;
