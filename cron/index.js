@@ -20,55 +20,49 @@ var amazonLocale = {
 //Bootstrapped
 var clients = {};
 
-Object.keys(amazonLocale).forEach(function(el, index, array) {
-  clients[el] = amazon.createClient(amazonLocale[el].credentials);
-});
-//
+Object.keys(amazonLocale).forEach(function(key, index, array) {
 
-amazonLocale.UK.ids.forEach(function(el, index, array) {
-  var lookUpSettings = {
-    idType: 'ASIN',
-    Condition: 'New',
-    includeReviewsSummary: false,
-    itemId: amazonLocale.UK.ids[index].toString(),
-    responseGroup: 'ItemAttributes',
-    domain: amazonLocale.UK.domain
-  }
+  var key = key;
 
-  clients.UK.itemLookup(lookUpSettings, 
-    function(err, results) {
-    if (err) {
-      console.log(util.inspect(err, false, null));
-    } else {
-      console.log('');
-      console.log('');
-      console.log('LOOKUP NUMBER: ' + index + ' of ' + array.length);
-      console.log('');
-      console.log('');
-      // console.log(util.inspect(results, false, null));
-      console.log('');
-      console.log('');
-      console.log('');
+  /**
+   * Creates a client from credentials
+   * Need one of these for each locale
+   */
+  clients[key] = amazon.createClient(amazonLocale[key].credentials);
+
+  /**
+   * Lookup settings object needs to be built/bootstrapped.
+   * It needs to be generated 4 times for UK, and 3 for US
+   * Quantity is determined by number of ID chunks per locale.
+   */
+
+  /**
+   * Analyse ID chunks in locale.
+   */
+
+  amazonLocale[key].ids.forEach(function(el, index, array) {
+
+    var lookUpSettings = {
+      idType: 'ASIN',
+      Condition: 'New',
+      includeReviewsSummary: false,
+      itemId: amazonLocale[key].ids[index].toString(),
+      responseGroup: 'ItemAttributes,Offers,Images',
+      domain: amazonLocale[key].domain
     }
+
+    /**
+     * Run lookup for each ID chunk.
+     */
+
+    clients[key].itemLookup(lookUpSettings, 
+      function(err, results) {
+      if (err) {
+        console.log(util.inspect(err, false, null));
+      } else {
+        console.log(util.inspect(results, false, null));
+      }
+    });
   });
+
 });
-
-// Changes 4 times for UK
-// var lookUpSettings = {
-//   idType: 'ASIN',
-//   Condition: 'New',
-//   includeReviewsSummary: false,
-//   itemId: amazonLocale.UK.ids[0].toString(),
-//   responseGroup: 'ItemAttributes,Offers,Images',
-//   domain: amazonLocale.UK.domain
-// }
-
-//Needs to be called 4 times
-// clients.UK.itemLookup(lookUpSettings, 
-//   function(err, results) {
-//   if (err) {
-//     console.log(util.inspect(err, false, null));
-//   } else {
-//     console.log(util.inspect(results, false, null));
-//   }
-// });
