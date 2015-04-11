@@ -8,7 +8,7 @@ var CronJob = require('cron').CronJob;
 var ukjob = new CronJob({
   cronTime: '*/5 * * * * *',
   onTick: function () {
-    console.log('UK Task running');
+    
   },
   start: false,
   timeZone: 'Europe/London'

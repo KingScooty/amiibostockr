@@ -1,20 +1,6 @@
 var amazon = require('amazon-product-api');
 var util = require('util');
 
-/**
-
-- Multiple locales
-- Grab the locale settings
-- Bootstrap the settings and config to create an amazon query
-- Cron the amazon query every 10 seconds
-- Return that data as a json payload
-
-*/
-
-var amazonLocale = {
-  UK: require('./uk'),
-  US: require('./us')
-}
 
 /**
  * Analyse ID chunks in locale.
@@ -23,9 +9,16 @@ var amazonLocale = {
 
 console.log(amazonLocale.UK.ids.length);
 
-function locales () {
+function bootstrap () {
   amazonLocale.forEach(function(el, index, array) {
-    
+
+    /**
+     * Creates a client from credentials
+     * Need one of these for each locale
+     */
+
+    var client = amazon.createClient(amazonLocale.UK.credentials);
+
   });   
 }
 
@@ -56,21 +49,18 @@ var lookUpSettings = {
 
 
 
-/**
- * Creates a client from credentials
- * Need one of these for each locale
- */
-var client = amazon.createClient(amazonLocale.UK.credentials);
 
 /**
  * Loops up and returns payload for specific query
  * Called by a cron job, and uses locale settings
  */
-client.itemLookup(lookUpSettings, 
-  function(err, results) {
-  if (err) {
-    console.log(util.inspect(err, false, null));
-  } else {
-    console.log(util.inspect(results, false, null));
-  }
-});
+function itemLookup () {
+  client.itemLookup(lookUpSettings, 
+    function(err, results) {
+    if (err) {
+      console.log(util.inspect(err, false, null));
+    } else {
+      console.log(util.inspect(results, false, null));
+    }
+  });
+}
