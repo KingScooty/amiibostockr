@@ -99,13 +99,16 @@ function saveToRedis (locale, flattenedResult) {
     r.set(locale, flattenedResult, function(err, reply) {
       if (err) { reject(err) } 
       else {
+        console.log('Saving: ', reply);
         resolve(reply);
       }
     });
   });
 }
 
-createClients('UK');
-queryAmazon('UK');
+exports.initAmazon = function(locale) {
+  createClients(locale);
+  queryAmazon(locale);
+}
 
-module.exports = amazon;
+exports.amazon = amazon;

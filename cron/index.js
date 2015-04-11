@@ -1,6 +1,3 @@
-var amazon = require('amazon-product-api');
-var util = require('util');
-
 /**
 
 - Multiple locales
@@ -11,6 +8,6 @@ var util = require('util');
 
 */
 
-var queryAmazon = require('./amazon');
-queryAmazon();
+var queryAmazon = require('./amazon').initAmazon;
+queryAmazon('UK');
 
