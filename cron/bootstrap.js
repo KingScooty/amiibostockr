@@ -17,15 +17,31 @@ var amazonLocale = {
 }
 
 /**
- * Lookup settings object needs to be built/bootstrapped
+ * Analyse ID chunks in locale.
+ * e.g amazonLocale.UK.ids.length;
+ */
+
+console.log(amazonLocale.UK.ids.length);
+
+function locales () {
+  amazonLocale.forEach(function(el, index, array) {
+    
+  });   
+}
+
+function 
+
+/**
+ * Lookup settings object needs to be built/bootstrapped.
  * It needs to be generated 4 times for UK, and 3 for US
  * Quantity is determined by number of ID chunks per locale.
  */
+
 var lookUpSettings = {
   idType: 'ASIN',
   Condition: 'New',
   includeReviewsSummary: false,
-  itemId: amazonLocale.UK.ids[1].toString(),
+  itemId: amazonLocale.UK.ids[0].toString(),
   responseGroup: 'ItemAttributes,Offers,Images',
   domain: amazonLocale.UK.domain
 }
