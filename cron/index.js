@@ -1,3 +1,5 @@
+var CronJob = require('cron').CronJob;
+
 /**
 
 - Multiple locales
@@ -9,5 +11,21 @@
 */
 
 var queryAmazon = require('./amazon').initAmazon;
-queryAmazon('UK');
+// queryAmazon('UK');
 
+// var job = require('./cron').job;
+// var job().start(queryAmazon('UK'));
+
+// var CronJob = require('cron').CronJob;
+
+
+var job = new CronJob({
+  cronTime: '*/20 * * * * *',
+  onTick: function () {
+    queryAmazon('UK');
+  },
+  start: false,
+  timeZone: 'Europe/London'
+});
+
+job.start();
