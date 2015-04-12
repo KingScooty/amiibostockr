@@ -5,8 +5,8 @@ var _ = require('lodash');
 var amazon = require('../cron/amazon').amazon;
 var amazon_functions = require('../cron/amazon').functions;
 var flattenJSON = require('../cron/utils').flattenJSON;
-var productsInStock = require('../cron/utils').productsInStock;
-var resetStockValues = require('../cron/utils').resetStockValues;
+// var productsInStock = require('../cron/utils').productsInStock;
+// var resetStockValues = require('../cron/utils').resetStockValues;
 
 var payload = require('./fixtures/payload_grouped_UK');
 var payload2UK = require('./fixtures/payload_final_UK');
@@ -29,30 +29,5 @@ describe('Utils', function() {
     })
 
   })
-
-  describe('#productInStock', function() {
-    it('should filter the ASIN ids that are in stock', function() {
-      assert.equal(10, productsInStock(payload2UK).length);
-    });
-  });
-
-  describe('#resetStockValues', function() {
-    it('should reset all stock values to false', function() {
-      var ASIN = amazon.locale.UK.ASIN;
-
-      function checkAllFalse() {
-        return _.every(_.values(ASIN), function(v) {return !v;});        
-      }
-
-      assert.equal(checkAllFalse(), true);
-
-      amazon_functions.updateStock('UK', payload2UK);
-      assert.equal(checkAllFalse(), false);
-
-      resetStockValues(ASIN);
-      assert.equal(checkAllFalse(), true);
-
-    });
-  });
 
 });
