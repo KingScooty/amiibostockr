@@ -26,8 +26,8 @@ describe('Stock State Machine', function() {
         amazon_functions.updateStock('UK', payload2UK);
         amazon_functions.updateStock('US', payload2US);
 
-        assert.deepEqual(STATESTOCK.UK, amazon.locale.UK.ASIN);
-        assert.deepEqual(STATESTOCK.US, amazon.locale.US.ASIN);
+        assert.deepEqual(STATESTOCK.UK, inStockUK);
+        assert.deepEqual(STATESTOCK.US, inStockUS);
      });
   });
 });
