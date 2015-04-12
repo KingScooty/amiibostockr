@@ -15,12 +15,12 @@ var inStockUK = require('./fixtures/inStock_UK');
 var inStockUS = require('./fixtures/inStock_US');
 
 describe('Amazon', function() {
-  describe('#updateStock', function() {
-     it('should truthy all the ASIN ids that are in stock', function() {
-      amazon_functions.updateStock('UK', payload2UK);
-      amazon_functions.updateStock('US', payload2US);
-      assert.deepEqual(inStockUK, amazon.locale.UK.ASIN);
-      assert.deepEqual(inStockUS, amazon.locale.US.ASIN);
-     });
-  });
+  // describe('#updateStock', function() {
+  //    it('should truthy all the ASIN ids that are in stock', function() {
+  //     amazon_functions.updateStock('UK', payload2UK);
+  //     amazon_functions.updateStock('US', payload2US);
+  //     assert.deepEqual(inStockUK, amazon.locale.UK.ASIN);
+  //     assert.deepEqual(inStockUS, amazon.locale.US.ASIN);
+  //    });
+  // });
 });

@@ -3,7 +3,7 @@ var util = require('util');
 var _ = require('lodash');
 var Promise = require('bluebird');
 var flattenJSON = require('./utils').flattenJSON;
-var productsInStock = require('./utils').productsInStock;
+// var productsInStock = require('./utils').productsInStock;
 var r = require('./redis');
 
 var settings = require('../app/settings');
@@ -111,22 +111,20 @@ function saveToRedis (locale, flattenedResult) {
   });
 }
 
-function updateStock (locale, payload) {
+// function updateStock (locale, payload) {
 
-  var ASIN = _.flattenDeep(productsInStock(payload));
+//   var ASIN = _.flattenDeep(productsInStock(payload));
 
-  _.map(amazon.locale[locale].ASIN, function (index, key, array) {
+//   _.map(amazon.locale[locale].ASIN, function (index, key, array) {
 
-    if(_.includes(ASIN, key)) {
-      array[key] = true;
-    } else {
-      array[key] = false
-    }
-  });
+//     if(_.includes(ASIN, key)) {
+//       array[key] = true;
+//     } else {
+//       array[key] = false
+//     }
+//   });
 
-  // console.log(ASIN);
-  // console.log(amazon.locale[locale].ASIN);
-}
+// }
 
 exports.initAmazon = function(locale) {
   createClients(locale);
@@ -136,6 +134,6 @@ exports.initAmazon = function(locale) {
 exports.amazon = amazon;
 
 exports.functions = {
-  updateStock: updateStock,
+  // updateStock: updateStock,
   saveToRedis: saveToRedis
 }

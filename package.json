@@ -17,10 +17,12 @@
     "jade": "~1.9.2",
     "lodash": "^3.6.0",
     "morgan": "~1.5.1",
+    "observed": "^1.1.1",
     "redis": "^0.12.1",
     "serve-favicon": "~2.2.0"
   },
   "devDependencies": {
-    "mocha": "^2.2.4"
+    "mocha": "^2.2.4",
+    "sinon": "^1.14.1"
   }
 }
