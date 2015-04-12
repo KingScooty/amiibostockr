@@ -2,11 +2,14 @@ var amazonAPI = require('amazon-product-api');
 var util = require('util');
 var _ = require('lodash');
 var Promise = require('bluebird');
-var flattenJSON = require('./utils').flattenJSON;
-// var productsInStock = require('./utils').productsInStock;
 var r = require('./redis');
 
-var settings = require('../app/settings');
+var flattenJSON = require('./utils').flattenJSON;
+var settings = require('./settings/settings');
+
+var stock = require('./stock');
+var productTable = stock.productTable;
+var inStockTable = stock.inStockTable;
 
 var amazon = {};
 amazon.locale = {};
@@ -18,7 +21,7 @@ amazon.clients = {};
  */ 
 
 settings.locales.forEach(function(locale, index, array) {
-  amazon.locale[locale] = require('./locales/' + locale);
+  amazon.locale[locale] = require('./settings/locales/' + locale);
 }); 
 
 /**
@@ -26,13 +29,13 @@ settings.locales.forEach(function(locale, index, array) {
  * chunk of product ID's for that locale.
  */
 
-function bootstrap_settings (locale, idChunkIndex) {
+function bootstrap_settings (locale, chunkIndex) {
 
   return {
     idType: 'ASIN',
     Condition: 'New',
     includeReviewsSummary: false,
-    itemId: amazon.locale[locale].ASINchunked[idChunkIndex].toString(),
+    itemId: amazon.locale[locale].ASINchunked[chunkIndex].toString(),
     responseGroup: 'ItemAttributes,Offers', //Images
     domain: amazon.locale[locale].domain
   }
@@ -51,7 +54,8 @@ function queryAmazon (locale, idChunkIndex) {
    * Wait for all promises to complete.
    */
 
-  Promise.all(products.map(function(key, idChunkIndex, array) {
+  // Promise.all(products.map(function(key, idChunkIndex, array) {
+    Promise.all(products.map(function(productsChunk, chunkIndex, array) {
 
     /**
      * Create new promise and query Amazon based on the 10 product
@@ -60,7 +64,7 @@ function queryAmazon (locale, idChunkIndex) {
 
     return new Promise(function (resolve, reject) {
       amazon.clients[locale]
-      .itemLookup(bootstrap_settings(locale, idChunkIndex), 
+      .itemLookup(bootstrap_settings(locale, chunkIndex), 
         function(err, results) {
         if (err) { reject(err); } 
         else {
@@ -76,18 +80,27 @@ function queryAmazon (locale, idChunkIndex) {
    */
 
   .then(function (results) {
-    return flattenJSON(results, locale);
+    return flattenJSON(results);
   })
 
+  /**
+   * Clear out 
+   */
+
+  .then(function (results) {
+    // console.log(util.inspect(results, false, null));
+    return cleanUpResponse(locale, results);
+  })
 
  /**
   * Store the result in Redis.
   * Update the stock.
   */
 
-  .then(function(flattenedResult) {
-    saveToRedis(locale, flattenedResult)
-    // updateStock(locale, flattenedResult);
+  .then(function (cleanedProducts) {
+    saveToRedis(locale, cleanedProducts);
+    // inStockTable[locale] = response.tempStore;
+    productTable[locale] = cleanedProducts;
   })
 
   /**
@@ -98,6 +111,42 @@ function queryAmazon (locale, idChunkIndex) {
     console.log('Error querying Amazon - ', error);
   });
 }
+
+function cleanUpResponse (locale, flattenedResult) {
+  return new Promise(function (resolve, reject) {
+    var cleanedProducts = [];
+    cleanedProducts.push(flattenedResult.map(function(product, index) {
+
+      var isInStock = false;
+
+      if (_.first(product.Offers[0]["TotalOffers"]) === '1') {
+        inStockTable[locale][_.first(product.ASIN)] = true;
+        isInStock = true;
+
+        console.log(util.inspect(inStockTable, false, null));
+
+      } else {
+        delete inStockTable[locale][_.first(product.ASIN)];
+      }
+
+      return {
+        ASIN : _.first(product.ASIN),
+        inStock: isInStock,
+        url  : _.first(product.DetailPageURL),
+        name : _.first(product.ItemAttributes[0].Edition),
+        title: _.first(product.ItemAttributes[0].Title),
+        date : _.first(product.ItemAttributes[0].ReleaseDate)
+        // OffersSummary: product.OfferSummary,
+        // Offers: product.Offers
+      }
+
+    }));
+
+    resolve(cleanedProducts);
+  });
+}
+
+
 
 function saveToRedis (locale, flattenedResult) {
   return new Promise(function (resolve, reject) {
@@ -111,20 +160,7 @@ function saveToRedis (locale, flattenedResult) {
   });
 }
 
-// function updateStock (locale, payload) {
 
-//   var ASIN = _.flattenDeep(productsInStock(payload));
-
-//   _.map(amazon.locale[locale].ASIN, function (index, key, array) {
-
-//     if(_.includes(ASIN, key)) {
-//       array[key] = true;
-//     } else {
-//       array[key] = false
-//     }
-//   });
-
-// }
 
 exports.initAmazon = function(locale) {
   createClients(locale);

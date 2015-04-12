@@ -11,18 +11,13 @@ var CronJob = require('cron').CronJob;
 */
 
 var queryAmazon = require('./amazon').initAmazon;
-// queryAmazon('UK');
-
-// var job = require('./cron').job;
-// var job().start(queryAmazon('UK'));
-
-// var CronJob = require('cron').CronJob;
-
+var publisher = require('./publisher');
 
 var job = new CronJob({
-  cronTime: '*/5 * * * * *',
+  cronTime: '*/20 * * * * *',
   onTick: function () {
     queryAmazon('UK');
+    queryAmazon('US');
   },
   start: false,
   timeZone: 'Europe/London'

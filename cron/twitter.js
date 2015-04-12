@@ -1,8 +1,12 @@
 var Twit = require('twit');
 var fs = require('fs');
-var O = require('observed');
+
 
 var stock = require('../cron/stock').STOCK;
+
+/**
+ * Auth
+ */
 
 var T = new Twit({
     consumer_key:         'jlA7DILS4ptyFhYeKi4Q6Nyvg'
@@ -12,18 +16,15 @@ var T = new Twit({
 });
 
 
-var ee = O(stock);
-ee.on('update', function() {
-
-  tweet(name, link, locale);
-
-});
-
 function tweet (name, link, locale) {
-  T.post('statuses/update', { status: "" }, function(err, data, response) {
+  var tweetString = "Head's up! " + name + " is now in stock on the " + locale + " store! #amiibo " + link;
+
+  T.post('statuses/update', { status: tweetString }, function(err, data, response) {
     console.log(data)
   });
 }
+
+module.exports = tweet;
 
 /*
 var b64content = fs.readFileSync('./media/UKB00Q6A57J2.jpg', { encoding: 'base64' })

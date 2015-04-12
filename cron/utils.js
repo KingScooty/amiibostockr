@@ -1,24 +1,20 @@
 var _ = require('lodash');
+var diff = require('deep-diff').diff;
 
 exports.flattenJSON = function (payload) {
   return _.flatten(payload);
 }
 
-// exports.resetStockValues = function (hash) {
-//   return Object.keys(hash).map(function(value, index) {
-//     hash[value] = false;
-//   });
-// }
+/**
+ EXAMPLE RESPONSE:
 
-// exports.productsInStock = function (payload) {
+[ { kind: 'D', path: [ 'UK', 'B00N8PBGV6' ], lhs: true },
+  { kind: 'D', path: [ 'UK', 'B00QGBNLU8' ], lhs: true },
+  { kind: 'N', path: [ 'UK', 'B00Q6A571A' ], rhs: true },
+  { kind: 'D', path: [ 'US', 'B00O97ZWVC' ], lhs: true } ]
 
-//   return _.pluck(_.filter(payload, { 
-//     "Offers": [
-//       {
-//         "TotalOffers": ["1"]
-//       }
-//     ]
-//   }), "ASIN");
+*/
 
-// }
-
+exports.diffTable = function (lhs, rhs) {
+ return diff(lhs, rhs);
+}

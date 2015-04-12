@@ -43,7 +43,8 @@ var domain = 'webservices.amazon.com';
 
 module.exports = {
   ASIN: ASIN,
-  ASINchunked: _.chunk(Object.keys(ASIN), 10),
+  // ASINchunked: _.chunk(Object.keys(ASIN), 10),
+  ASINchunked: _.chunk(ASIN, 10),
   domain: domain,
   credentials: credentials
 }

@@ -1,63 +1,52 @@
-var amazon = require('./amazon').amazon;
-var settings = require('../app/settings');
-var O = require('observed');
-var _ = require('lodash');
-var STOCK = buildStockObject();
-
-// STOCK = {
-//   UK : {
-//     'B00PG6ZDPK': {
-
-//     }
-//   }
-// }
-
-/*
-UK: [
-  { 
-    ASIN: 'B00PG6ZDPK',
-    inStock: false,
-    name: '',
-    link: '',
-    price: '',
-    img: [],
-  },
-]
-*/
+var settings = require('./settings/settings');
+var productTable = buildProductTable();
+var inStockTable = buildStockTable();
 
 /**
  * Bootstrap the stockstate to the locale ASIN objects
  */
-function buildStockObject () {
-  var STOCK = {};
 
-  // settings.locales.forEach(function(locale, index, array) {
-  //   STOCK[locale] = {
-  //     amazon.locale[locale].ASIN
-  //   }
-  // });
+function buildProductTable () {
+  var stock = {};
 
   settings.locales.forEach(function(locale, index, array) {
-
-    STOCK[locale] = [];
-
-    amazon.locale[locale].ASIN.map(function (value, index, array) {
-
-      var productArgs = {
-        ASIN: value,
-        inStock: false,
-        name: '',
-        price: 0,
-        img: []
-      }
-
-      STOCK[locale].push(productArgs);
-    });
+    stock[locale] = [];
   });
 
-  return STOCK;
+  return stock;
 }
 
+function buildStockTable () {
+  var stock = {};
+
+  settings.locales.forEach(function(locale, index, array) {
+    stock[locale] = {};
+  });
+
+  return stock;
+}
+
+
+module.exports = {
+  inStockTable: inStockTable,
+  productTable: productTable
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 var productsInStock = function (payload) {
 
   return _.pluck(_.filter(payload, { 
@@ -76,18 +65,14 @@ var resetStockValues = function (products) {
   });
 }
 
+
 var updateStock = function (locale, payload) {
 
-  var ASIN = _.flattenDeep(productsInStock(payload));
+  var availableProducts = _.flattenDeep(productsInStock(payload));
 
   _.map(STOCK[locale], function (product, key, array) {
 
-    // if(_.includes(ASIN, key)) {
-    //   array[key] = true;
-    // } else {
-    //   array[key] = false
-    // }
-    if (_.includes(ASIN, product.ASIN)) {
+    if (_.includes(availableProducts, product.ASIN)) {
       product.inStock = true;
     } else {
       product.inStock = false;
@@ -104,3 +89,4 @@ module.exports = {
   resetStockValues: resetStockValues,
   updateStock: updateStock
 }
+*/
