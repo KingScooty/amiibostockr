@@ -2,7 +2,7 @@ var amazon = require('./amazon').amazon;
 var settings = require('../app/settings');
 var O = require('observed');
 var _ = require('lodash');
-var STOCK = bootstrapStock();
+var STOCK = buildStockObject();
 
 // STOCK = {
 //   UK : {
@@ -12,6 +12,7 @@ var STOCK = bootstrapStock();
 //   }
 // }
 
+/*
 UK: [
   { 
     ASIN: 'B00PG6ZDPK',
@@ -22,16 +23,36 @@ UK: [
     img: [],
   },
 ]
-
+*/
 
 /**
  * Bootstrap the stockstate to the locale ASIN objects
  */
-function bootstrapStock () {
+function buildStockObject () {
   var STOCK = {};
 
+  // settings.locales.forEach(function(locale, index, array) {
+  //   STOCK[locale] = {
+  //     amazon.locale[locale].ASIN
+  //   }
+  // });
+
   settings.locales.forEach(function(locale, index, array) {
-    STOCK[locale] = amazon.locale[locale].ASIN;
+
+    STOCK[locale] = [];
+
+    amazon.locale[locale].ASIN.map(function (value, index, array) {
+
+      var productArgs = {
+        ASIN: value,
+        inStock: false,
+        name: '',
+        price: 0,
+        img: []
+      }
+
+      STOCK[locale].push(productArgs);
+    });
   });
 
   return STOCK;
@@ -49,9 +70,9 @@ var productsInStock = function (payload) {
 
 }
 
-var resetStockValues = function (hash) {
-  return Object.keys(hash).map(function(value, index) {
-    hash[value] = false;
+var resetStockValues = function (products) {
+  return products.map(function(product, index) {
+    product.inStock = false;
   });
 }
 
@@ -59,13 +80,19 @@ var updateStock = function (locale, payload) {
 
   var ASIN = _.flattenDeep(productsInStock(payload));
 
-  _.map(STOCK[locale], function (index, key, array) {
+  _.map(STOCK[locale], function (product, key, array) {
 
-    if(_.includes(ASIN, key)) {
-      array[key] = true;
+    // if(_.includes(ASIN, key)) {
+    //   array[key] = true;
+    // } else {
+    //   array[key] = false
+    // }
+    if (_.includes(ASIN, product.ASIN)) {
+      product.inStock = true;
     } else {
-      array[key] = false
+      product.inStock = false;
     }
+
   });
 
 }
