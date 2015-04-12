@@ -17,12 +17,6 @@ function bootstrapStock () {
   return STOCK;
 }
 
-// var ee = O(STOCK);
-// ee.on('update', function() {
-//   console.log('STOCKSTATE CHANGED');
-//   return true;
-// });
-
 var productsInStock = function (payload) {
 
   return _.pluck(_.filter(payload, { 
@@ -56,18 +50,10 @@ var updateStock = function (locale, payload) {
 
 }
 
-// var eventUpdated = function () {
-// var eventStockUpdated = O(STOCK);
-// eventStockUpdated.on('update', function() {
-  // console.log('UPDATED!!!');
-  // return true;
-// });
-// }
 
 module.exports = {
   STOCK: STOCK,
   productsInStock: productsInStock,
   resetStockValues: resetStockValues,
-  updateStock: updateStock//,
-  // eventStockUpdated: eventStockUpdated
+  updateStock: updateStock
 }

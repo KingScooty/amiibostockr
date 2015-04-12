@@ -3,7 +3,7 @@ var util = require('util');
 var _ = require('lodash');
 var Promise = require('bluebird');
 var flattenJSON = require('./utils').flattenJSON;
-var productsInStock = require('./utils').productsInStock;
+// var productsInStock = require('./utils').productsInStock;
 var r = require('./redis');
 
 var settings = require('../app/settings');
