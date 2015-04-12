@@ -3,7 +3,7 @@ var router = express.Router();
 var util = require('util');
 var r = require('../cron/redis');
 
-r.get('UK', function(err, reply) {
+r.get('US', function(err, reply) {
   console.log(util.inspect(JSON.parse(reply), {showHidden: false, depth: null}));
   // value = JSON.parse(reply);
   value = reply;

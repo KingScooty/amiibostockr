@@ -3,8 +3,8 @@ var assert = require("assert"); // node.js core module
 var _ = require('lodash');
 var flattenJSON = require('../cron/utils').flattenJSON;
 var productsInStock = require('../cron/utils').productsInStock;
-var payload = require('./fixtures/payload_grouped');
-var payload2 = require('./fixtures/payload_final');
+var payload = require('./fixtures/payload_grouped_UK');
+var payload2 = require('./fixtures/payload_final_UK');
 
 describe('Utils', function() {
   describe('#flattenJSON()', function() {
