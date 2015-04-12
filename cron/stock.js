@@ -4,6 +4,26 @@ var O = require('observed');
 var _ = require('lodash');
 var STOCK = bootstrapStock();
 
+// STOCK = {
+//   UK : {
+//     'B00PG6ZDPK': {
+
+//     }
+//   }
+// }
+
+UK: [
+  { 
+    ASIN: 'B00PG6ZDPK',
+    inStock: false,
+    name: '',
+    link: '',
+    price: '',
+    img: [],
+  },
+]
+
+
 /**
  * Bootstrap the stockstate to the locale ASIN objects
  */

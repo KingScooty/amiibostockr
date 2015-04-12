@@ -19,7 +19,8 @@
     "morgan": "~1.5.1",
     "observed": "^1.1.1",
     "redis": "^0.12.1",
-    "serve-favicon": "~2.2.0"
+    "serve-favicon": "~2.2.0",
+    "twit": "^1.1.20"
   },
   "devDependencies": {
     "mocha": "^2.2.4",
