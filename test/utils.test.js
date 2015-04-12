@@ -16,8 +16,8 @@ describe('Utils', function() {
     it('should flatten array chunks into one object', function() {
       // assert.notEqual(4, _.flatten(payload).length);
       // assert.equal(35, _.flatten(payload).length);
-      assert.notEqual(4, flattenJSON(payload).length);
-      assert.equal(35, flattenJSON(payload).length);
+      assert.notEqual(flattenJSON(payload).length, 4);
+      assert.equal(flattenJSON(payload).length, 35);
     })
 
   })
