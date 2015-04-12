@@ -5,24 +5,43 @@ var CronJob = require('cron').CronJob;
  */ 
 
 // runs every 5 seconds
-var ukjob = new CronJob({
-  cronTime: '*/5 * * * * *',
-  onTick: function () {
-    
-  },
-  start: false,
-  timeZone: 'Europe/London'
-});
+exports.job = function (task) {
 
-ukjob.start();
+  var args = {
+    cronTime: '*/5 * * * * *',
+    onTick: function () {
+      task();
+    },
+    start: false,
+    timeZone: 'Europe/London'
+  }
 
-var usjob = new CronJob({
-  cronTime: '*/5 * * * * *',
-  onTick: function () {
-    console.log('US Task running');
-  },
-  start: false,
-  timeZone: 'Europe/London'
-});
+  return new CronJob(args);
+}
 
-usjob.start();
+// job.start('hello');
+
+// function bootstrap_settings (locale) {
+
+//   return {
+//     cronTime: '*/5 * * * * *',
+//     onTick: function (locale) {
+//       console.log(locale);
+//     },
+//     start: false,
+//     timeZone: 'Europe/London'
+//   }
+
+// }
+
+
+// var usjob = new CronJob({
+//   cronTime: '*/5 * * * * *',
+//   onTick: function () {
+//     console.log('US Task running');
+//   },
+//   start: false,
+//   timeZone: 'Europe/London'
+// });
+
+// usjob.start();

@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-var ids = {
+var ASIN = {
   'B00Q6A57J2': false,
   'B00O9QCJFK': false,
   'B00SSU692M': false,
@@ -47,7 +47,8 @@ var credentials = {
 var domain = 'webservices.amazon.co.uk'
 
 module.exports = {
-  ids: _.chunk(Object.keys(ids), 10),
+  ASIN: ASIN,
+  ASINchunked: _.chunk(Object.keys(ASIN), 10),
   domain: domain,
   credentials: credentials
 }

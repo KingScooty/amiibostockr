@@ -1,7 +1,9 @@
 var amazonAPI = require('amazon-product-api');
 var util = require('util');
+var _ = require('lodash');
 var Promise = require('bluebird');
 var flattenJSON = require('./utils').flattenJSON;
+var productsInStock = require('./utils').productsInStock;
 var r = require('./redis');
 
 var settings = require('../app/settings');
@@ -16,7 +18,7 @@ amazon.clients = {};
  */ 
 
 settings.locales.forEach(function(locale, index, array) {
-  amazon.locale[locale] = require('./' + locale);
+  amazon.locale[locale] = require('./locales/' + locale);
 }); 
 
 /**
@@ -30,8 +32,8 @@ function bootstrap_settings (locale, idChunkIndex) {
     idType: 'ASIN',
     Condition: 'New',
     includeReviewsSummary: false,
-    itemId: amazon.locale[locale].ids[idChunkIndex].toString(),
-    // responseGroup: 'ItemAttributes,Offers,Images',
+    itemId: amazon.locale[locale].ASINchunked[idChunkIndex].toString(),
+    responseGroup: 'ItemAttributes,Offers', //Images
     domain: amazon.locale[locale].domain
   }
 
@@ -43,7 +45,7 @@ function createClients (locale) {
 
 function queryAmazon (locale, idChunkIndex) {
 
-  var products = amazon.locale[locale].ids;
+  var products = amazon.locale[locale].ASINchunked;
 
   /**
    * Wait for all promises to complete.
@@ -77,12 +79,15 @@ function queryAmazon (locale, idChunkIndex) {
     return flattenJSON(results, locale);
   })
 
+
  /**
-   * Store the result in Redis.
-   */
+  * Store the result in Redis.
+  * Update the stock.
+  */
 
   .then(function(flattenedResult) {
     saveToRedis(locale, flattenedResult)
+    // updateStock(locale, flattenedResult);
   })
 
   /**
@@ -96,7 +101,7 @@ function queryAmazon (locale, idChunkIndex) {
 
 function saveToRedis (locale, flattenedResult) {
   return new Promise(function (resolve, reject) {
-    r.set(locale, flattenedResult, function(err, reply) {
+    r.set(locale, JSON.stringify(flattenedResult), function(err, reply) {
       if (err) { reject(err) } 
       else {
         console.log('Saving: ', reply);
@@ -106,9 +111,31 @@ function saveToRedis (locale, flattenedResult) {
   });
 }
 
+function updateStock (locale, payload) {
+
+  var ASIN = _.flattenDeep(productsInStock(payload));
+
+  _.map(amazon.locale[locale].ASIN, function (index, key, array) {
+
+    if(_.includes(ASIN, key)) {
+      array[key] = true;
+    } else {
+      array[key] = false
+    }
+  });
+
+  // console.log(ASIN);
+  // console.log(amazon.locale[locale].ASIN);
+}
+
 exports.initAmazon = function(locale) {
   createClients(locale);
   queryAmazon(locale);
 }
 
 exports.amazon = amazon;
+
+exports.functions = {
+  updateStock: updateStock,
+  saveToRedis: saveToRedis
+}
