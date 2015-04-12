@@ -20,7 +20,7 @@ var queryAmazon = require('./amazon').initAmazon;
 
 
 var job = new CronJob({
-  cronTime: '*/20 * * * * *',
+  cronTime: '*/5 * * * * *',
   onTick: function () {
     queryAmazon('UK');
   },

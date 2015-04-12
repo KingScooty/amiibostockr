@@ -1,3 +1,8 @@
-function isInStock() {
+var STOCKSTATE = {
+  UK : {
+    
+  },
+  US : {
 
+  }
 }
