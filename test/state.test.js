@@ -1,8 +1,8 @@
 var assert = require("assert"); // node.js core module
 
 var _ = require('lodash');
+var O = require('observed');
 
-var amazon = require('../cron/amazon').amazon;
 var amazon_functions = require('../cron/amazon').functions;
 
 var STATESTOCK = require('../cron/state');
@@ -19,15 +19,31 @@ var inStockUS = require('./fixtures/inStock_US');
 describe('Stock State Machine', function() {
   describe('#STATESTOCK', function() {
 
-     it('Bootstrap a STATESTOCK object that maps to the amazon locale ASIN object', function() {
-        assert.deepEqual(STATESTOCK.UK, amazon.locale.UK.ASIN);
-        assert.deepEqual(STATESTOCK.US, amazon.locale.US.ASIN);
+    var amazon = require('../cron/amazon').amazon;
 
-        amazon_functions.updateStock('UK', payload2UK);
-        amazon_functions.updateStock('US', payload2US);
+    it('Should bootstrap a STATESTOCK object that maps to the amazon locale ASIN object', function() {
+      assert.deepEqual(STATESTOCK.UK, amazon.locale.UK.ASIN);
+      assert.deepEqual(STATESTOCK.US, amazon.locale.US.ASIN);
 
-        assert.deepEqual(STATESTOCK.UK, inStockUK);
-        assert.deepEqual(STATESTOCK.US, inStockUS);
-     });
+      amazon_functions.updateStock('UK', payload2UK);
+      amazon_functions.updateStock('US', payload2US);
+
+      assert.deepEqual(STATESTOCK.UK, inStockUK);
+      assert.deepEqual(STATESTOCK.US, inStockUS);
+    });
+
   });
+
+  describe('#EventEmitter', function () {
+
+    var amazon = require('../cron/amazon').amazon;
+
+    it('Should emit only when stock changes', function() {
+      var ee = O(STOCKSTATE);
+      ee.on('update', function() {
+        assert
+      });
+    });
+
+  })
 });
