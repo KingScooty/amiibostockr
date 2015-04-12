@@ -29,11 +29,12 @@ describe('Stock Module', function() {
 
     describe('#resetStockValues', function() {
       it('should reset all stock values to false', function() {
-        // var ASIN = amazon.locale.UK.ASIN;
-        var ASIN = STOCK.UK;
+
+        var products = STOCK.UK;
 
         function checkAllFalse() {
-          return _.every(_.values(ASIN), function(v) {return !v;});        
+          // return _.every(_.values(ASIN), function(v) {return !v;});
+          return _.every(products, { inStock: false});
         }
 
         assert.equal(checkAllFalse(), true);
@@ -41,14 +42,14 @@ describe('Stock Module', function() {
         stock.updateStock('UK', payload2UK);
         assert.equal(checkAllFalse(), false);
 
-        stock.resetStockValues(ASIN);
+        stock.resetStockValues(products);
         assert.equal(checkAllFalse(), true);
 
       });
     });
 
     describe('#updateStock', function() {
-      it('should truthy all the ASIN ids that are in stock', function() {
+      it('should truthy all the products that are in stock', function() {
         stock.updateStock('UK', payload2UK);
         stock.updateStock('US', payload2US);
 
@@ -64,9 +65,6 @@ describe('Stock Module', function() {
     var amazon = require('../cron/amazon').amazon;
 
     it('Should bootstrap a STOCK object that maps to the amazon locale ASIN object', function() {
-      assert.deepEqual(STOCK.UK, amazon.locale.UK.ASIN);
-      assert.deepEqual(STOCK.US, amazon.locale.US.ASIN);
-
       stock.updateStock('UK', payload2UK);
       stock.updateStock('US', payload2US);
 
@@ -79,8 +77,8 @@ describe('Stock Module', function() {
   describe('#EventEmitter', function (done) {
 
     before(function() {
-      var ASIN = STOCK.UK;
-      stock.resetStockValues(ASIN);
+      var products = STOCK.UK;
+      stock.resetStockValues(products);
     });
 
 
@@ -110,8 +108,9 @@ describe('Stock Module', function() {
         done();
       });
 
-      stock.STOCK.UK["B00N8PBS0"] = false;
-      stock.STOCK.UK["B00N8PBYK4"] = true;
+      STOCK.UK[2].inStock = false;
+      STOCK.UK[5].inStock = false;
+      STOCK.UK[21].inStock = true;
 
     });
 
