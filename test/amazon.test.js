@@ -1,4 +1,4 @@
-var assert = require("assert"); // node.js core module
+var assert = require("chai").assert;
 
 var _ = require('lodash');
 var O = require('observed');
