@@ -33,18 +33,16 @@ var ASIN = [
   'B00O92ONBM'
 ];
 
-var credentials = {
-  awsId: process.env.AWSIDUS,
-  awsSecret: process.env.AWSSECRETUS,
-  awsTag: 'kings0b-21'
-};
-
-var domain = 'webservices.amazon.com';
-
 module.exports = {
-  ASIN: ASIN,
-  // ASINchunked: _.chunk(Object.keys(ASIN), 10),
-  ASINchunked: _.chunk(ASIN, 10),
-  domain: domain,
-  credentials: credentials
+
+  ASIN        : ASIN,
+  ASIN_CHUNKS : _.chunk(ASIN, 10),
+  DOMAIN      : 'webservices.amazon.com',
+
+  CREDS : {
+    awsId: process.env.AWSIDUS,
+    awsSecret: process.env.AWSSECRETUS,
+    awsTag: 'kings0b-21'
+  };
+
 }
