@@ -1,4 +1,5 @@
 var amazonAPI = require('amazon-product-api');
+var Promise = require('bluebird');
 
 module.exports = {
 
@@ -13,19 +14,22 @@ module.exports = {
       Condition: 'New',
       includeReviewsSummary: false,
       itemId: products.toString(),
-      // itemId: amazon.locale[locale].ASINchunked[chunkIndex].toString(),
       responseGroup: 'ItemAttributes,Offers', //Images
       domain: domain
     }
 
   },
 
-  query: function () {
-
+  query: function (client, products, domain) {
+    return new Promise(function (revolve, reject) {
+      client.itemLookup(generate_query_arg(products, domain),
+      function(err, response) {
+        err ? reject(err) : resolve(response);
+      });
+    });
   },
 
   collect_responses: function () {
-
   }
 
 }
