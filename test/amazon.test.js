@@ -67,7 +67,8 @@ describe('Query Amazon advertising API', function() {
       awsTag: 'tag'
     };
 
-    it('should receive multiple payloads from query', function () {
+    it('should receive multiple payloads from query function', function () {
+      // Spy on query and hijack it. Forcing it to return a payload.
       var spy = sinon.spy(amazon, 'query').andReturn(amazon_response_UK)
 
 
@@ -94,10 +95,9 @@ describe('Query Amazon advertising API', function() {
 
     })
 
-  });
+    it('should wait for all of the payloads before acting', function() {
 
-  describe('save to redis', function () {
-
+    });
   });
 
 });
