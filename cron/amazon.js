@@ -30,10 +30,12 @@ module.exports = {
   },
 
   // collect_responses: function (query_function, args) {
-  
+
   // Batch calls a query and waits for all promises to complete.
-  batch_query: function(query_function, args) {
-    query_function(args);
+  batch_query: function(query_function, args, times) {\
+    // Call following function number of times and wait for
+    // all promises to complete.
+    return query_function(args);
   }
 
 }
