@@ -1,3 +1,4 @@
+'use strict';
 var assert = require("chai").assert;
 
 var _ = require('lodash');
@@ -5,7 +6,7 @@ var O = require('observed');
 
 /*
   Journey:
-  
+
   1. Create Client
   2. Query Amazon
   3. Merge response chunks into one object
@@ -26,9 +27,9 @@ describe('Pub Sub functionality', function() {
   describe('', function () {
 
     /*
-    
+
     http://stackoverflow.com/questions/4441798/how-to-use-redis-publish-subscribe-with-nodejs-to-notify-clients-when-data-value
-    
+
     */
 
     var redis = require("redis"),
@@ -36,7 +37,7 @@ describe('Pub Sub functionality', function() {
         client2 = redis.createClient();
 
     before(function () {
-      
+
     })
 
     it('should publish changes to redis', function (done) {
@@ -45,7 +46,7 @@ describe('Pub Sub functionality', function() {
         console.log(channel + ": " + message);
         assert(true);
         done();
-      });      
+      });
 
       client1.on("subscribe", function (channel, count) {
         client2.publish("pubsub", "I am sending a message.");

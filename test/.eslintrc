@@ -1,5 +1,4 @@
 env:
-  browser: true
   node: true
   mocha: true
 
@@ -38,7 +37,7 @@ rules:
   camelcase: 0
   new-cap: 2
   consistent-this: [1, "_this"]
-  func-names: 2
+  func-names: 0
   key-spacing: 2
   no-dupe-keys: 2
-  strict: 2
+  strict: 0
