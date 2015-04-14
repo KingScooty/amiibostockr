@@ -36,36 +36,18 @@ var amazon_response_UK = require('./fixtures/amazon_response_UK');
 */
 
 describe('Query Amazon advertising API', function() {
-  var products = ['1', '2', '3'];
-  var domain = 'domain.com';
+  // var products = ['1', '2', '3'];
+  // var domain = 'domain.com';
 
   describe('generate query arguments', function() {
     it('should populate the arguments object to be sent with Query', function() {
-      var response = amazon.generate_query_arg(products, domain);
-
-      var expected = {
-        idType: 'ASIN',
-        Condition: 'New',
-        includeReviewsSummary: false,
-        itemId: '1,2,3',
-        responseGroup: 'ItemAttributes,Offers',
-        domain: 'domain.com'
-      };
-
-      assert.deepEqual(response, expected);
     });
   });
 
   describe('Collect Query Amazon responses', function() {
-    var CREDS = {
-      awsId: 'user',
-      awsSecret: 'pass',
-      awsTag: 'tag'
-    };
-
     it('should receive multiple payloads from query function', function() {
       // Spy on query and hijack it. Forcing it to return a payload.
-      var spy = sinon.spy(amazon, 'query').andReturn(amazon_response_UK);
+      // var spy = sinon.spy(amazon, 'query').andReturn(amazon_response_UK);
 
 
       // var spy = sinon.spy(amazon, "generate_query_arg");

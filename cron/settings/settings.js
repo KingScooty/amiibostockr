@@ -1,8 +1,15 @@
+'use strict';
+
+// Locale files to be imported
 var locales = [
   'UK',
   'US'
 ];
 
-module.exports = {
-  locales: locales
-}
+var settings = {};
+
+locales.forEach(function callback(locale) {
+  settings[locale] = require('./locales/' + locale);
+});
+
+module.exports = settings;
