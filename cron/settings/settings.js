@@ -9,7 +9,7 @@ var locales = [
 var settings = {};
 
 locales.forEach(function callback(locale) {
-  settings[locale] = require('./locales/' + locale);
+  settings[locale] = require('./locales/' + locale + '.js');
 });
 
 module.exports = settings;
