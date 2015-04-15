@@ -48,7 +48,7 @@ var self = module.exports = {
   },
 
   /**
-   * batch_query() returns a callback once all queries
+   * batch_query() calls query() and returns a callback once all queries
    * have returned, and have been batched together into
    * one single, flattened object.
    *
