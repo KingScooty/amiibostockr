@@ -2,7 +2,7 @@
 var assert = require('chai').assert;
 // var assert = require("assert");
 
-// var _ = require('lodash');
+var _ = require('lodash');
 // var O = require('observed');
 var sinon = require('sinon');
 
@@ -16,7 +16,7 @@ var amazon = require('../cron/amazon');
  * Fixtures
  */
 
-var amazon_response_UK = require('./fixtures/amazon_response_UK');
+// var amazon_response_UK = require('./fixtures/amazon_response_UK');
 
 /*
   Journey:
@@ -36,44 +36,87 @@ var amazon_response_UK = require('./fixtures/amazon_response_UK');
 */
 
 describe('Query Amazon advertising API', function() {
-  // var products = ['1', '2', '3'];
-  // var domain = 'domain.com';
+  var i;
 
-  describe('generate query arguments', function() {
-    it('should populate the arguments object to be sent with Query', function() {
+  // Number of queries to batch.
+  var batch_query_size = 4;
+
+  // Expected AmazonAPI_response
+  var amazonAPI_response = [
+    {'ASIN': 0},
+    {'ASIN': 1},
+    {'ASIN': 2},
+    {'ASIN': 3},
+    {'ASIN': 4},
+    {'ASIN': 5},
+    {'ASIN': 6},
+    {'ASIN': 7},
+    {'ASIN': 8},
+    {'ASIN': 9}
+  ];
+
+  // Stub for amazon.query()
+  var query = function query() {
+    return new Promise(function promise(resolve) {
+      resolve(amazonAPI_response);
     });
+  };
+
+  // Expected payload return from amazon.batch_query()
+  var expected = [
+    {'ASIN': 0},
+    {'ASIN': 1},
+    {'ASIN': 2},
+    {'ASIN': 3},
+    {'ASIN': 4},
+    {'ASIN': 5},
+    {'ASIN': 6},
+    {'ASIN': 7},
+    {'ASIN': 8},
+    {'ASIN': 9},
+    {'ASIN': 0},
+    {'ASIN': 1},
+    {'ASIN': 2},
+    {'ASIN': 3},
+    {'ASIN': 4},
+    {'ASIN': 5},
+    {'ASIN': 6},
+    {'ASIN': 7},
+    {'ASIN': 8},
+    {'ASIN': 9},
+    {'ASIN': 0},
+    {'ASIN': 1},
+    {'ASIN': 2},
+    {'ASIN': 3},
+    {'ASIN': 4},
+    {'ASIN': 5},
+    {'ASIN': 6},
+    {'ASIN': 7},
+    {'ASIN': 8},
+    {'ASIN': 9},
+    {'ASIN': 0},
+    {'ASIN': 1},
+    {'ASIN': 2},
+    {'ASIN': 3},
+    {'ASIN': 4},
+    {'ASIN': 5},
+    {'ASIN': 6},
+    {'ASIN': 7},
+    {'ASIN': 8},
+    {'ASIN': 9}
+  ];
+
+  beforeEach(function() {
   });
 
-  describe('Collect Query Amazon responses', function() {
-    it('should receive multiple payloads from query function', function() {
-      // Spy on query and hijack it. Forcing it to return a payload.
-      // var spy = sinon.spy(amazon, 'query').andReturn(amazon_response_UK);
+  describe('batch query', function() {
+    it('should populate the arguments object to be sent with Query', function(done) {
+      sinon.stub(amazon, 'query', query);
 
-
-      // var spy = sinon.spy(amazon, "generate_query_arg");
-      // sinon.stub(amazon.query, 'client.itemLookup').returns(amazon_response_UK);
-      //
-      // var client = create_client()
-      //
-      // var result = amazon.query(['1,2,3'], 'domain.com')
-      //
-
-      // var mock = sinon.mock(amazon);
-      //
-      // mock
-      //   .expects('query')
-      //   .withExactArgs(CREDS, products, domain)
-      //   .once();
-      //
-      // amazon.query(CREDS, products, domain);
-      //
-      // mock.verify();
-      // assert.ok(spy.calledOnce);
-      // amazon.generate_query_arg.restore();
-    });
-
-    it('should wait for all of the payloads before acting', function() {
-
+      amazon.batch_query('UK').then(function(payload) {
+        assert.deepEqual(payload, expected);
+        done();
+      });
     });
   });
 });

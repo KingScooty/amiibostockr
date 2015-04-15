@@ -48,6 +48,6 @@ module.exports = {
     awsId: process.env.AWSIDUS,
     awsSecret: process.env.AWSSECRETUS,
     awsTag: 'kings0b-21'
-  };
+  }
 
-}
+};

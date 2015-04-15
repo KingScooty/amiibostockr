@@ -1,6 +1,9 @@
 'use strict';
 var amazonAPI = require('amazon-product-api');
 var Promise = require('bluebird');
+var _ = require('lodash');
+
+var settings = require('./settings/settings');
 
 var self = module.exports = {
 
@@ -13,12 +16,12 @@ var self = module.exports = {
    * query(client_UK, [1,2,3], 'domain.com');
    */
 
-  query: function query(client, products, domain) {
+  query: function query(client, product_array, domain) {
     var args = {
         idType: 'ASIN',
         Condition: 'New',
         includeReviewsSummary: false,
-        itemId: products.toString(),
+        itemId: product_array.toString(),
         responseGroup: 'ItemAttributes,Offers', // Images
         domain: domain
     };
@@ -34,23 +37,36 @@ var self = module.exports = {
     });
   },
 
-  // settings.UK
+  /*
+   * batch_query('UK')
+   * Generate args from settings file and return response
+   */
 
-  batch_query: function batch_query() {
+  batch_query: function batch_query(locale) {
     /*
      * Batch calls a query and waits for all promises to complete.
      * Call following function number of times and wait for
      * all promises to complete.
-     *
-     * sets
      */
-    Promise.all(product_chunks.map(function callback(products) {
-      return self.query(products);
-    }));
-  }
 
-  // get_results: function get_results() {
-  //
-  // }
+    var args = {
+      client: self.create_client(settings[locale].CREDS),
+      product_chunks: settings[locale].ASIN_CHUNKS,
+      domain: settings[locale].DOMAIN
+    };
+
+    return Promise.all(args.product_chunks.map(function callback(chunk, index) {
+      return self.query(args);
+    }))
+
+    // Flatten payload chunks into one array
+    .then(function callback(payload) {
+      return _.flatten(payload);
+    })
+
+    .catch(function callback(e) {
+      console.log('Exception ' + e);
+    });
+  }
 
 };
