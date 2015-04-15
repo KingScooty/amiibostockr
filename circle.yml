@@ -1,0 +1,11 @@
+machine:
+  environment:
+    PATH: ${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin
+    NODE_ENV: test
+    TZ: Europe/London
+  node:
+    version: 0.12
+general:
+  branches:
+    ignore:
+      - gh-pages # list of branches to ignore
