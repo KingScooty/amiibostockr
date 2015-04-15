@@ -55,7 +55,7 @@ var self = module.exports = {
       domain: settings[locale].DOMAIN
     };
 
-    return Promise.all(args.product_chunks.map(function callback(chunk, index) {
+    return Promise.all(args.product_chunks.map(function callback() {
       return self.query(args);
     }))
 

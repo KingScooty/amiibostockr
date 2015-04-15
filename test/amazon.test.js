@@ -36,10 +36,9 @@ var amazon = require('../cron/amazon');
 */
 
 describe('Query Amazon advertising API', function() {
-  var i;
-
-  // Number of queries to batch.
-  var batch_query_size = 4;
+  /*
+   * STUB: Amazon.query()
+   */
 
   // Expected AmazonAPI_response
   var amazonAPI_response = [
