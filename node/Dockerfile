@@ -1,4 +1,5 @@
-FROM dockerfile/node
+#FROM dockerfile/node
+FROM node:latest
 
 # Install nodemon
 RUN npm install -g nodemon
