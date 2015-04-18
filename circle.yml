@@ -1,0 +1,20 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  override:
+    - sudo pip install -U docker-compose
+    # - sudo pip install --upgrade pip
+    # - sudo pip install git+https://git@github.com/docker/compose.git@1.2.0
+    # - sudo chmod +x /usr/local/bin/docker-compose
+
+test:
+  override:
+    # - docker-compose -f testing.yml run --no-deps node npm test
+    - docker-compose -f docker-compose.testing.yml run --no-deps node npm test
+
+general:
+  branches:
+    ignore:
+      - gh-pages # list of branches to ignore

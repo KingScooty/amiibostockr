@@ -1,0 +1,18 @@
+node:
+  build: ./node
+  volumes:
+    - "node:/src/node"
+  ports:
+    - "80:3000"
+# http://tech.playlab.com/2015/02/25/running-rspec-docker-circleci.html
+# This uses the same interface for the container and the host, thus making all
+# services listening on localhost available.
+  net: "host"
+#
+#
+  links:
+   - redis
+redis:
+    build: ./redis
+    ports:
+      - "6379:6379"
