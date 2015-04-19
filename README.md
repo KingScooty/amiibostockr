@@ -1,5 +1,16 @@
 #AmiiboStockr
 
+##Deployment Journey
+
+1. Development Environment
+2. Deployed to Github
+3. Built and tested on CirlceCI
+4. Master test pass, trigger build on Docker Hub
+5. Once built, trigger deploy on Tutum to Digital Ocean.
+
+##Current live link:
+http://382c2958-kingscooty.node.tutum.io
+
 ##Development Journey
 
 - Cron App
