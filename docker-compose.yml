@@ -1,7 +1,7 @@
 node:
   build: ./node
   volumes:
-    - "node:/src/node"
+    - "./node:/src/node"
   ports:
     - "80:3000"
   links:
@@ -12,3 +12,13 @@ redis:
     build: ./redis
     ports:
       - "6379:6379"
+
+# worker:
+#   build: .
+#   links:
+#     - redis:redisdb
+#   command: jobs
+#   volumes_from:
+#     - app
+#   environment:
+#     SECRET_KEY_BASE: much_security

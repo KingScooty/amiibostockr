@@ -1,5 +1,6 @@
-#FROM dockerfile/node
-FROM node:latest
+FROM dockerfile/nodejs
+#FROM node:latest
+#FROM node:0.12-onbuild
 
 # Install nodemon
 RUN npm install -g nodemon
@@ -10,8 +11,9 @@ RUN cd /tmp && npm install
 RUN mkdir -p /src && cp -a /tmp/node_modules /src/
 
 # Define working directory
-WORKDIR /src
-ADD . /src
+WORKDIR /src/node
+#WORKDIR /src
+#ADD . /src
 
 # Expose port
 EXPOSE  3000
