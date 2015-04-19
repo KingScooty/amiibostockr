@@ -1,7 +1,7 @@
 node:
   build: ./node
-  volumes:
-    - "./node:/src/node"
+  # volumes:
+  #   - "./node:/src/node"
   ports:
     - "80:3000"
 # http://tech.playlab.com/2015/02/25/running-rspec-docker-circleci.html

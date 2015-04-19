@@ -1,9 +1,7 @@
 node:
   build: ./node
-  volumes:
-    # - "./node:/src/node"
-    # Mount local dir for development
-    - "./node:/usr/src/app"
+  # volumes:
+  #   - "./node:/src/node"
   ports:
     - "80:3000"
   links:
