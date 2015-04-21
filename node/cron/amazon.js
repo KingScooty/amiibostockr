@@ -164,7 +164,7 @@ var self = module.exports = {
    */
 
   init: function init(locale) {
-    self.batch_query(locale)
+    return self.batch_query(locale)
     .then(function callback(payload) {
       return {
         store: 'amazon',

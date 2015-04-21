@@ -107,6 +107,17 @@ describe('Query Amazon advertising API', function() {
 
   var stub__query;
 
+  Object.size = function(obj) {
+    var size = 0;
+    var key;
+    for (key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        size++;
+      }
+    }
+    return size;
+  };
+
   describe('#batch_query()', function() {
     beforeEach(function() {
       stub__query = sinon.stub(amazon, 'query', query);
@@ -121,11 +132,11 @@ describe('Query Amazon advertising API', function() {
       assert.ok(stub__query.called);
       assert.equal(stub__query.callCount, 4);
     });
-    it('should return a flattened payload from running query() 4 times', function() {
+    it('should return a flattened payload from running query() 4 times', function(done) {
       amazon.batch_query('UK').then(function(payload) {
         assert.equal(stub__query.callCount, 4);
         assert.deepEqual(payload, expected);
-        // done();
+        done();
       });
     });
   });
@@ -142,17 +153,6 @@ describe('Query Amazon advertising API', function() {
     var response = amazon.generate_product_table(amazon_response_UK);
     var first_key = Object.keys(response)[0];
     var product = response[first_key];
-
-    Object.size = function(obj) {
-      var size = 0;
-      var key;
-      for (key in obj) {
-        if (obj.hasOwnProperty(key)) {
-          size++;
-        }
-      }
-      return size;
-    };
 
     it('should return an object', function() {
       assert.typeOf(response, 'object');
@@ -225,14 +225,23 @@ describe('Query Amazon advertising API', function() {
       amazon.init('UK');
       assert.ok(stub__batch_query.calledOnce);
     });
-    it('should then call generate_in_stock_table()', function() {
-      amazon.init('UK', function() {
+    it('should then call generate_in_stock_table()', function(done) {
+      amazon.init('UK').then(function() {
         assert.ok(spy_generate_in_stock_table.calledOnce);
+        done();
       });
     });
-    it('should then call generate_product_table()', function() {
-      amazon.init('UK', function() {
+    it('should then call generate_product_table()', function(done) {
+      amazon.init('UK').then(function() {
         assert.ok(spy_generate_product_table.calledOnce);
+        done();
+      });
+    });
+    it('should return an object with 4 fields', function(done) {
+      amazon.init('UK').then(function(response) {
+        assert.typeOf(response, 'object');
+        assert.equal(Object.size(response), 4);
+        done();
       });
     });
   });
