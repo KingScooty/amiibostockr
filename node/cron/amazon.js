@@ -167,6 +167,8 @@ var self = module.exports = {
     self.batch_query(locale)
     .then(function callback(payload) {
       return {
+        store: 'amazon',
+        locale: locale,
         in_stock_table: self.generate_in_stock_table(payload),
         product_table: self.generate_product_table(payload)
       };

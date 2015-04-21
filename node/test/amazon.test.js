@@ -121,12 +121,11 @@ describe('Query Amazon advertising API', function() {
       assert.ok(stub__query.called);
       assert.equal(stub__query.callCount, 4);
     });
-
-    it('should return a flattened payload from running query() 4 times', function(done) {
+    it('should return a flattened payload from running query() 4 times', function() {
       amazon.batch_query('UK').then(function(payload) {
         assert.equal(stub__query.callCount, 4);
         assert.deepEqual(payload, expected);
-        done();
+        // done();
       });
     });
   });
@@ -165,6 +164,7 @@ describe('Query Amazon advertising API', function() {
       assert.typeOf(product, 'object');
       assert.equal(Object.size(product), 7);
     });
+
     describe('response.product object', function() {
       it('should have an ASIN property', function() {
         assert.ok(product.hasOwnProperty('ASIN'));
