@@ -5,6 +5,21 @@ var _ = require('lodash');
 
 var settings = require('./settings/settings');
 
+/*
+
+init
+  call batch query based on locale
+      query amazon API via lookup item (max 10 items)
+    wait for all queries to complete
+    flatten payload
+
+  generate amazon locale stock table
+  generate amazon locale product table
+
+  return in stock object; product object;
+
+*/
+
 var self = module.exports = {
 
   /**
@@ -48,9 +63,9 @@ var self = module.exports = {
   },
 
   /**
-   * batch_query() calls query() and returns a callback once all queries
-   * have returned, and have been batched together into
-   * one single, flattened object.
+   * batch_query() calls query() several times depending on the number of chunks,
+   * and returns a callback once all queries have returned, and have been
+   * batched together into one single, flattened object.
    *
    * @param {string} locale
    * @return {payload} payload
@@ -90,6 +105,45 @@ var self = module.exports = {
     .catch(function callback(e) {
       console.log('Exception ' + e);
     });
+  },
+
+  /**
+   * generate_in_stock_table() creates an array of product ASIN codes that are
+   * currently in stock.
+   *
+   * @param {object} payload
+   * @return {array} products_in_stock
+   */
+
+  generate_in_stock_table: function generate_in_stock_table(payload) {
+    var products_in_stock = _.pluck(_.filter(payload, {
+        'Offers': [
+          {
+            'TotalOffers': ['1']
+          }
+        ]
+      }), 'ASIN');
+
+    return _.flattenDeep(products_in_stock);
+  },
+
+  generate_product_table: function generate_product_table(payload) {
+    var new_payload = {};
+
+    payload.map(function callback(product) {
+      new_payload[product.ASIN] = {
+        ASIN: _.first(product.ASIN),
+        // inStock: isInStock, <<-- pass off to function
+        url: _.first(product.DetailPageURL),
+        name: _.first(product.ItemAttributes[0].Edition),
+        title: _.first(product.ItemAttributes[0].Title),
+        date: _.first(product.ItemAttributes[0].ReleaseDate),
+        OffersSummary: JSON.stringify(product.OfferSummary),
+        Offers: JSON.stringify(product.Offers)
+      };
+    });
+
+    return new_payload;
   }
 
 };

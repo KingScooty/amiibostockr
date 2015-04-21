@@ -13,11 +13,12 @@ http://382c2958-kingscooty.node.tutum.io
 
 ##Development Journey
 
-- Cron App
-  - Triggers Cron Job
+- Query Amazon
+  - Return flattened batch response
 
-- Cron Job
-  - Queries Amazon
+- Update stock table in redis
+- Store product response as meta for site.
+- Cross check stock with product table 
 
 ##Tabgs
 ###UK Id's - tag1
