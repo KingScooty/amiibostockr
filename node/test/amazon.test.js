@@ -208,6 +208,7 @@ describe('Query Amazon advertising API', function() {
     var stub__batch_query;
     var spy_generate_in_stock_table;
     var spy_generate_product_table;
+    var init_response;
 
     beforeEach(function() {
       spy_generate_in_stock_table = sinon.spy(amazon, 'generate_in_stock_table');
@@ -241,8 +242,27 @@ describe('Query Amazon advertising API', function() {
       amazon.init('UK').then(function(response) {
         assert.typeOf(response, 'object');
         assert.equal(Object.size(response), 4);
+        init_response = response;
         done();
       });
     });
+    // describe('init() response object', function() {
+    it('should return an object with a store property', function() {
+      assert.ok(init_response.hasOwnProperty('store'));
+      assert.typeOf(init_response.store, 'string');
+    });
+    it('should return an object with a locale property', function() {
+      assert.ok(init_response.hasOwnProperty('locale'));
+      assert.typeOf(init_response.locale, 'string');
+    });
+    it('should return an object with a in_stock_table property', function() {
+      assert.ok(init_response.hasOwnProperty('in_stock_table'));
+      assert.typeOf(init_response.in_stock_table, 'array');
+    });
+    it('should return an object with a product_table property', function() {
+      assert.ok(init_response.hasOwnProperty('product_table'));
+      assert.typeOf(init_response.product_table, 'object');
+    });
+    // });
   });
 });
