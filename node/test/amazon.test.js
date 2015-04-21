@@ -128,6 +128,8 @@ describe('Query Amazon advertising API', function() {
   });
   describe('#generate_product_table()', function() {
     var response = amazon.generate_product_table(amazon_response_UK);
+    var first_key = Object.keys(response)[0];
+    var product = response[first_key];
 
     Object.size = function(obj) {
       var size = 0;
@@ -147,8 +149,37 @@ describe('Query Amazon advertising API', function() {
       assert.equal(Object.size(response), 35);
     });
     it('should strip each product down to 7 key pairs', function() {
-      var first_key = Object.keys(response)[0];
-      assert.equal(Object.size(response[first_key]), 7);
+      assert.equal(Object.size(product), 7);
     });
+    describe('response.product object', function() {
+      it('should have an ASIN property', function() {
+        assert.ok(product.hasOwnProperty('ASIN'));
+        assert.typeOf(product.ASIN, 'string');
+      });
+      it('should have a url property', function() {
+        assert.ok(product.hasOwnProperty('url'));
+        assert.typeOf(product.url, 'string');
+      });
+      it('should have a name property', function() {
+        assert.ok(product.hasOwnProperty('name'));
+        assert.typeOf(product.name, 'string');
+      });
+      it('should have a title property', function() {
+        assert.ok(product.hasOwnProperty('title'));
+        assert.typeOf(product.title, 'string');
+      });
+      it('should have a date property', function() {
+        assert.ok(product.hasOwnProperty('date'));
+        assert.typeOf(product.date, 'string');
+      });
+      it('should have a OffersSummary property', function() {
+        assert.ok(product.hasOwnProperty('OffersSummary'));
+        assert.typeOf(product.OffersSummary, 'string');
+      });
+      it('should have a Offers property', function() {
+        assert.ok(product.hasOwnProperty('Offers'));
+        assert.typeOf(product.Offers, 'string');
+      });
+    })
   });
 });
