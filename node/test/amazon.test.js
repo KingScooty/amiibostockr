@@ -122,7 +122,7 @@ describe('Query Amazon advertising API', function() {
       assert.equal(stub__query.callCount, 4);
     });
 
-    it('should populate the arguments object to be sent with Query', function(done) {
+    it('should return a flattened payload from running query() 4 times', function(done) {
       amazon.batch_query('UK').then(function(payload) {
         assert.equal(stub__query.callCount, 4);
         assert.deepEqual(payload, expected);
