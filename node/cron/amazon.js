@@ -127,6 +127,14 @@ var self = module.exports = {
     return _.flattenDeep(products_in_stock);
   },
 
+  /**
+   * generate_product_table() creates a new stripped down payload object
+   * with stringified offers JSON.
+   *
+   * @param {object} payload
+   * @return {array} new_payload
+   */
+
   generate_product_table: function generate_product_table(payload) {
     var new_payload = {};
 
@@ -144,6 +152,16 @@ var self = module.exports = {
     });
 
     return new_payload;
+  },
+
+  init: function init(locale) {
+    self.batch_query(locale)
+    .then(function callback(payload) {
+      return {
+        in_stock_table: self.generate_in_stock_table(payload),
+        product_table: self.generate_product_table(payload)
+      };
+    });
   }
 
 };
