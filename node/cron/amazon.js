@@ -154,6 +154,15 @@ var self = module.exports = {
     return new_payload;
   },
 
+  /**
+   * init() triggers a batch_query based on locale, waits for return,
+   * and then runs data transforms to produce an in_stock table, and a
+   * product table, and returns these in a callback.
+   *
+   * @param {string} locale
+   * @return {object, object} in_stock_table, product_table
+   */
+
   init: function init(locale) {
     self.batch_query(locale)
     .then(function callback(payload) {
