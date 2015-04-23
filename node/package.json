@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "nodemon ./bin/www",
-     "test": "./node_modules/.bin/mocha --reporter spec"
+    "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "dependencies": {
     "amazon-product-api": "git+https://github.com/KingScooty/amazon-product-api.git",
@@ -27,6 +27,7 @@
   "devDependencies": {
     "chai": "^2.2.0",
     "mocha": "^2.2.4",
+    "rewire": "^2.3.1",
     "sinon": "^1.14.1"
   }
 }

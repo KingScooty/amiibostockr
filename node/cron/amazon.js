@@ -170,6 +170,8 @@ var self = module.exports = {
         store: 'amazon',
         locale: locale,
         in_stock_table: self.generate_in_stock_table(payload),
+        // Potentially only has to do this on initialise?
+        // Surpress for subequent API calls?
         product_table: self.generate_product_table(payload)
       };
     });
