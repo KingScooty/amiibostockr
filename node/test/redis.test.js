@@ -1,18 +1,16 @@
 'use strict';
 var assert = require('chai').assert;
-// var assert = require("assert");
 
-// var _ = require('lodash');
-// var O = require('observed');
 var sinon = require('sinon');
 var Rewire = require('rewire');
-// var Promise = require('bluebird');
 
 /**
  * Dependencies
  */
 
+ /*eslint-disable */
 var redis = Rewire('../cron/redis');
+/*eslint-enable */
 
 /**
  * Fixtures
@@ -23,42 +21,37 @@ var payload = require('./fixtures/amazon_response_UK--stripped');
 
 describe('Redis', function() {
   describe('#process_data()', function() {
-    var stub = function stub() {
+    var stub__populate_stock;
+    var stub__populate_products;
+    var stub__update_stock_table;
+
+    var blank_stub = function blank_stub() {
       return new Promise(function promise(resolve) {
         resolve(true);
       });
     };
 
-    // var redisMock = {
-    //   exists: sinon.spy(function() {
-    //     console.log('you fucking prick!');
-    //     return [0, 0];
-    //   })
-    // };
-
-    var redisMock = sinon.spy(function() {
-      return 0;
+    beforeEach(function() {
+      stub__populate_stock = sinon.stub(redis, 'populate_stock_table', blank_stub);
+      stub__populate_products = sinon.stub(redis, 'populate_product_table', blank_stub);
+      stub__update_stock_table = sinon.stub(redis, 'update_stock_table', blank_stub);
     });
 
-    /*eslint-disable */
-    redis.__set__('redisExists', redisMock);
-    /*eslint-enable */
+    afterEach(function() {
+      stub__populate_stock.restore();
+      stub__populate_products.restore();
+      stub__update_stock_table.restore();
+    });
 
     describe('if redis tables are empty', function() {
-      var stub__populate_stock;
-      var stub__populate_products;
-      var spy__update_stock_table;
+      before(function() {
+        var redisMock = sinon.spy(function() {
+          return 0;
+        });
 
-      beforeEach(function() {
-        stub__populate_stock = sinon.stub(redis, 'populate_stock_table', stub);
-        stub__populate_products = sinon.stub(redis, 'populate_product_table', stub);
-        spy__update_stock_table = sinon.spy(redis, 'update_stock_table');
-      });
-
-      afterEach(function() {
-        stub__populate_stock.restore();
-        stub__populate_products.restore();
-        spy__update_stock_table.restore();
+        /*eslint-disable */
+        redis.__set__('redisExists', redisMock);
+        /*eslint-enable */
       });
 
       it('should call populate_stock()', function(done) {
@@ -74,15 +67,37 @@ describe('Redis', function() {
         });
       });
       it('should not call update_stock_table()', function() {
-        assert.equal(spy__update_stock_table.callCount, 0);
+        assert.equal(stub__update_stock_table.callCount, 0);
       });
     });
     describe('if redis tables populated', function() {
-      it('should ', function() {
+      before(function() {
+        var redisMock = sinon.spy(function() {
+          return 1;
+        });
 
+        /*eslint-disable */
+        redis.__set__('redisExists', redisMock);
+        /*eslint-enable */
       });
-      it('should...', function() {
 
+      it('should NOT call populate_stock()', function(done) {
+        redis.process_data(payload).then(function() {
+          assert.equal(stub__populate_stock.callCount, 0);
+          done();
+        });
+      });
+      it('should NOT call populate_products()', function(done) {
+        redis.process_data(payload).then(function() {
+          assert.equal(stub__populate_products.callCount, 0);
+          done();
+        });
+      });
+      it('should call update_stock_table()', function(done) {
+        redis.process_data(payload).then(function() {
+          assert.ok(stub__update_stock_table.calledOnce);
+          done();
+        });
       });
     });
   });

@@ -75,6 +75,8 @@ self = module.exports = {
   },
 
   update_stock_table: function update_stock_table() {
+    console.log('update stock table called');
+    console.log('spy not stopping this from being called');
     /*
     Redis stock set already exists.
       e.g [val1, val5, val3, val8]
