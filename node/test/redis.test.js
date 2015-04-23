@@ -26,6 +26,17 @@ describe('Redis', function() {
   //     assert.deepEqual(amazon_response_UK_stripped, response);
   //   });
   // });
+  describe('#process_data()', function() {
+    it('should...', function() {
+
+    });
+    it('should...', function() {
+
+    });
+    it('should...', function() {
+
+    });
+  });
   describe('Save to redis', function() {
   });
 });

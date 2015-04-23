@@ -23,7 +23,7 @@ update stock table
 var self = module.exports = {
 
   populate_stock_table: function populate_stock_table() {
-    // 'amazon:UK:is_in_stock' 
+    // 'amazon:UK:is_in_stock'
     // client.sadd('is_in_stock', ASIN);
   },
 
@@ -31,9 +31,6 @@ var self = module.exports = {
 
   },
 
-  init: function init() {
-
-  },
 
   process_data: function process_data(data) {
 
