@@ -39,7 +39,12 @@ self = module.exports = {
     //   return [value];
     // });
     // redisExists(key1).then( function callback() {
-    stock_table.map(function callback(value, index) {
+    console.log('hello?');
+    console.log(stock_table);
+    console.log(typeof stock_table);
+
+    // wrap in a promise
+    stock_table.each(function callback(index, value) {
       r.sadd(key, value);
     });
     // });

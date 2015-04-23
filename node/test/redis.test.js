@@ -1,6 +1,7 @@
 'use strict';
 var assert = require('chai').assert;
 
+var r = require('redis').createClient();
 var sinon = require('sinon');
 var Rewire = require('rewire');
 
@@ -16,7 +17,6 @@ var redis = Rewire('../cron/redis');
  * Fixtures
  */
 
-// var amazon_response_UK = require('./fixtures/amazon_response_UK');
 var payload = require('./fixtures/amazon_response_UK--stripped');
 
 describe('Redis', function() {
@@ -54,13 +54,13 @@ describe('Redis', function() {
         /*eslint-enable */
       });
 
-      it('should call populate_stock()', function(done) {
+      it('should call populate_stock_table()', function(done) {
         redis.process_data(payload).then(function() {
           assert.ok(stub__populate_stock.calledOnce);
           done();
         });
       });
-      it('should call populate_products()', function(done) {
+      it('should call populate_products_table()', function(done) {
         redis.process_data(payload).then(function() {
           assert.ok(stub__populate_products.calledOnce);
           done();
@@ -81,13 +81,13 @@ describe('Redis', function() {
         /*eslint-enable */
       });
 
-      it('should NOT call populate_stock()', function(done) {
+      it('should NOT call populate_stock_table()', function(done) {
         redis.process_data(payload).then(function() {
           assert.equal(stub__populate_stock.callCount, 0);
           done();
         });
       });
-      it('should NOT call populate_products()', function(done) {
+      it('should NOT call populate_products_table()', function(done) {
         redis.process_data(payload).then(function() {
           assert.equal(stub__populate_products.callCount, 0);
           done();
@@ -101,11 +101,34 @@ describe('Redis', function() {
       });
     });
   });
-  describe('Save to redis', function() {
+  describe('#populate_stock_table()', function() {
+    beforeEach(function() {
+    });
+    afterEach(function() {
+      r.flushdb();
+    });
+
+    it('should create a SET name based on passed through parameters', function(done) {
+      var store = 'amazon';
+      var locale = 'UK';
+      // var stock_table = { 0: 'BS121', 1: 'BS123', 2: 'BS125'};
+      var stock_table = ['BS121', 'BS123', 'BS125'];
+
+      redis.populate_stock_table(store, locale, stock_table).then(function callback() {
+        r.smembers('amazon:UK:stock_table', function callback(err, response) {
+          if (err) {
+            console.log(err);
+          } else {
+            assert.equal(response, stock_table);
+            done();
+          }
+        });
+      });
+    });
   });
-  describe('Save to redis', function() {
+  describe('#populate_products_table()', function() {
   });
-  describe('Save to redis', function() {
+  describe('#update_stock_table()', function() {
   });
   describe('Save to redis', function() {
   });
