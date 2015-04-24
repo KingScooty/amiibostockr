@@ -108,13 +108,12 @@ describe('Redis', function() {
     beforeEach(function() {
     });
     afterEach(function() {
-      // r.flushdb();
+      r.flushdb();
     });
 
     it('should create a SET name based on passed through parameters', function(done) {
       var store = 'amazon';
       var locale = 'UK';
-      // var stock_table1 = { 0: 'BS121', 1: 'BS123', 2: 'BS125'};
       var stock_table = ['BS121', 'BS123', 'BS125'];
 
       redis.populate_stock_table(store, locale, stock_table).then(function callback() {
@@ -132,20 +131,44 @@ describe('Redis', function() {
     });
   });
   describe('#populate_products_table()', function() {
-    it('should ...', function(done) {
-      var store = 'amazon';
-      var locale = 'UK';
-      // var stock_table1 = { 0: 'BS121', 1: 'BS123', 2: 'BS125'};
-      var product_table = payload.product_table;
+    var store = 'amazon';
+    var locale = 'UK';
+    var product_table = payload.product_table;
 
-      var expected_response = product_table.B00Q6A57J2;
+    var expected_response = product_table.B00Q6A57J2;
+    var returned_response;
 
+    before(function(done) {
       redis.populate_product_table(store, locale, product_table).then(function callback() {
         r.hgetall('amazon:UK:product_table:B00Q6A57J2').then(function callback(response) {
-          assert.deepEqual(response, expected_response);
+          returned_response = response;
           done();
         });
       });
+    });
+    it('should successfully save in the correct format to redis', function() {
+      assert.deepEqual(returned_response, expected_response);
+    });
+    it('return should have an ASIN field', function() {
+      assert.property(returned_response, 'ASIN');
+    });
+    it('return should have a url field', function() {
+      assert.property(returned_response, 'url');
+    });
+    it('return should have a date field', function() {
+      assert.property(returned_response, 'date');
+    });
+    it('return should have a title field', function() {
+      assert.property(returned_response, 'title');
+    });
+    it('return should have a name field', function() {
+      assert.property(returned_response, 'name');
+    });
+    it('return should have an Offers field', function() {
+      assert.property(returned_response, 'Offers');
+    });
+    it('return should have an OffersSummary field', function() {
+      assert.property(returned_response, 'OffersSummary');
     });
   });
   describe('#update_stock_table()', function() {
