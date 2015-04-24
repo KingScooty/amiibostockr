@@ -29,12 +29,6 @@ update stock table
 
 self = module.exports = {
 
-  // initialise_redis_tables: function
-  // initialise_redis_tables(store, locale, stock_table, product_table) {
-  //   populate_stock_table(store, locale, stock_table);
-  //   populate_product_table(store, locale, product_table);
-  // },
-
   populate_stock_table: function populate_stock_table(store, locale, stock_table) {
     var key = store + ':' + locale + ':stock_table';
     return redis.sadd(key, stock_table);
@@ -43,31 +37,9 @@ self = module.exports = {
   populate_product_table: function populate_product_table(store, locale, product_table) {
     var key = store + ':' + locale + ':product_table';
 
-    // console.log(typeof product_table);
-    // console.log(product_table);
-
     return Promise.all(Object.keys(product_table).map(function callback(id) {
-      console.log(id);
       return redis.hmset(key + ':' + id, product_table[id]);
     }));
-
-    // product_table.map(function callback(value, index) {
-      // console.log(value);
-      // r.sadd(key, value);
-      // amazon:UK:product_table:BS324343
-/*
-      r.hmset(key, {
-        "ASIN": '02',
-        'all_fields': JSON.stringify({'title': 'some title', 'price': '5.99'})
-      }, function callback(err, response) {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log(response);
-        }
-      });
-*/
-    // });
   },
 
   update_stock_table: function update_stock_table() {

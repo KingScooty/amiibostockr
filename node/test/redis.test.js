@@ -132,14 +132,19 @@ describe('Redis', function() {
     });
   });
   describe('#populate_products_table()', function() {
-    it('should ...', function() {
+    it('should ...', function(done) {
       var store = 'amazon';
       var locale = 'UK';
       // var stock_table1 = { 0: 'BS121', 1: 'BS123', 2: 'BS125'};
       var product_table = payload.product_table;
 
-      redis.populate_product_table(store, locale, product_table).then(function(response) {
-        console.log(response);
+      var expected_response = product_table.B00Q6A57J2;
+
+      redis.populate_product_table(store, locale, product_table).then(function callback() {
+        r.hgetall('amazon:UK:product_table:B00Q6A57J2').then(function callback(response) {
+          assert.deepEqual(response, expected_response);
+          done();
+        });
       });
     });
   });
