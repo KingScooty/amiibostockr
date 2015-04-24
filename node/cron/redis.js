@@ -37,34 +37,7 @@ self = module.exports = {
 
   populate_stock_table: function populate_stock_table(store, locale, stock_table) {
     var key = store + ':' + locale + ':stock_table';
-
-    // stock_table = map(myObj, function(value, index) {
-    //   return [value];
-    // });
-    // redisExists(key1).then( function callback() {
-    // console.log('hello?');
-    // console.log('stock_table: ', stock_table);
-    // console.log(typeof stock_table);
-
-    // wrap in a promise
-    // return Promise.all(stock_table.map(function callback(value) {
-    //   console.log('value: ', value);
-    //   redis.sadd(key, value)
-    //   /*
-    //    * Catch errors.
-    //    */
-    //   .catch(function callback(e) {
-    //     console.log('Exception ' + e);
-    //   });
-    // }));
-
     return redis.sadd(key, stock_table);
-
-    // });
-    // });
-
-    // 'amazon:UK:is_in_stock'
-    // client.sadd('is_in_stock', ASIN);
   },
 
   populate_product_table: function populate_product_table(store, locale, product_table) {

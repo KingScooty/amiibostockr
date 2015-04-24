@@ -108,7 +108,7 @@ describe('Redis', function() {
     beforeEach(function() {
     });
     afterEach(function() {
-      // r.flushdb();
+      r.flushdb();
     });
 
     it('should create a SET name based on passed through parameters', function(done) {
@@ -116,7 +116,6 @@ describe('Redis', function() {
       var locale = 'UK';
       // var stock_table1 = { 0: 'BS121', 1: 'BS123', 2: 'BS125'};
       var stock_table = ['BS121', 'BS123', 'BS125'];
-      // console.log(r);
 
       redis.populate_stock_table(store, locale, stock_table).then(function callback() {
         r.smembers('amazon:UK:stock_table').then(function(response) {
