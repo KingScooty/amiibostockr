@@ -1,9 +1,12 @@
 'use strict';
 var assert = require('chai').assert;
 
-var r = require('redis').createClient();
+// var r = require('redis').createClient();
+var Redis = require('ioredis');
+var r = new Redis();
 var sinon = require('sinon');
 var Rewire = require('rewire');
+// var _ = require('lodash');
 
 /**
  * Dependencies
@@ -50,7 +53,7 @@ describe('Redis', function() {
         });
 
         /*eslint-disable */
-        redis.__set__('redisExists', redisMock);
+        redis.__set__('redis.exists', redisMock);
         /*eslint-enable */
       });
 
@@ -77,7 +80,7 @@ describe('Redis', function() {
         });
 
         /*eslint-disable */
-        redis.__set__('redisExists', redisMock);
+        redis.__set__('redis.exists', redisMock);
         /*eslint-enable */
       });
 
@@ -105,23 +108,26 @@ describe('Redis', function() {
     beforeEach(function() {
     });
     afterEach(function() {
-      r.flushdb();
+      // r.flushdb();
     });
 
     it('should create a SET name based on passed through parameters', function(done) {
       var store = 'amazon';
       var locale = 'UK';
-      // var stock_table = { 0: 'BS121', 1: 'BS123', 2: 'BS125'};
+      // var stock_table1 = { 0: 'BS121', 1: 'BS123', 2: 'BS125'};
       var stock_table = ['BS121', 'BS123', 'BS125'];
+      // console.log(r);
 
       redis.populate_stock_table(store, locale, stock_table).then(function callback() {
-        r.smembers('amazon:UK:stock_table', function callback(err, response) {
-          if (err) {
-            console.log(err);
-          } else {
-            assert.equal(response, stock_table);
-            done();
+        r.smembers('amazon:UK:stock_table').then(function(response) {
+          var response_array = Array.prototype.slice.call(response);
+
+          function are_arrs_equal(arr1, arr2) {
+            return arr1.sort().toString() === arr2.sort().toString();
           }
+
+          assert.ok(are_arrs_equal(stock_table, response_array));
+          done();
         });
       });
     });

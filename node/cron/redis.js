@@ -1,16 +1,19 @@
 'use strict';
-var redis = require('redis');
+var Redis = require('ioredis');
+var redis = new Redis();
+
+// var redis = require('redis');
 var Promise = require('bluebird');
 // var redis = Promise.promisifyAll(require('redis'));
 
 var self;
 
-var r = redis.createClient();
-var redisExists = Promise.promisify(r.exists, r);
+// var r = redis.createClient();
+// var redisExists = Promise.promisify(r.exists, r);
 
-r.on('error', function callback(err) {
-  console.log('Error ' + err);
-});
+// r.on('error', function callback(err) {
+//   console.log('Error ' + err);
+// });
 
 /*
 
@@ -33,20 +36,31 @@ self = module.exports = {
   // },
 
   populate_stock_table: function populate_stock_table(store, locale, stock_table) {
-    var key = store + ':' + locale + 'stock_table';
+    var key = store + ':' + locale + ':stock_table';
 
     // stock_table = map(myObj, function(value, index) {
     //   return [value];
     // });
     // redisExists(key1).then( function callback() {
-    console.log('hello?');
-    console.log(stock_table);
-    console.log(typeof stock_table);
+    // console.log('hello?');
+    // console.log('stock_table: ', stock_table);
+    // console.log(typeof stock_table);
 
     // wrap in a promise
-    stock_table.each(function callback(index, value) {
-      r.sadd(key, value);
-    });
+    // return Promise.all(stock_table.map(function callback(value) {
+    //   console.log('value: ', value);
+    //   redis.sadd(key, value)
+    //   /*
+    //    * Catch errors.
+    //    */
+    //   .catch(function callback(e) {
+    //     console.log('Exception ' + e);
+    //   });
+    // }));
+
+    return redis.sadd(key, stock_table);
+
+    // });
     // });
 
     // 'amazon:UK:is_in_stock'
@@ -117,7 +131,6 @@ self = module.exports = {
     sdiffstore current_stock new_stock -- overwrite current_stock to new_stock
     del new_stock -- delete new_stock
     */
-
   },
 
 
@@ -141,7 +154,8 @@ self = module.exports = {
     //   console.log('hello?')
     // });
 
-    return Promise.all([redisExists(key1), redisExists(key2)]).then(function callback(response) {
+    // return Promise.all([redisExists(key1), redisExists(key2)]).then(function callback(response) {
+    return Promise.all([redis.exists(key1), redis.exists(key2)]).then(function callback(response) {
       // console.log(response);
       if ((response[0] === 0) || (response[1] === 0)) {
         // console.log('0 0 baby!');
