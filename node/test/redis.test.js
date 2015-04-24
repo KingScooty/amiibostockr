@@ -108,7 +108,7 @@ describe('Redis', function() {
     beforeEach(function() {
     });
     afterEach(function() {
-      r.flushdb();
+      // r.flushdb();
     });
 
     it('should create a SET name based on passed through parameters', function(done) {
@@ -132,6 +132,16 @@ describe('Redis', function() {
     });
   });
   describe('#populate_products_table()', function() {
+    it('should ...', function() {
+      var store = 'amazon';
+      var locale = 'UK';
+      // var stock_table1 = { 0: 'BS121', 1: 'BS123', 2: 'BS125'};
+      var product_table = payload.product_table;
+
+      redis.populate_product_table(store, locale, product_table).then(function(response) {
+        console.log(response);
+      });
+    });
   });
   describe('#update_stock_table()', function() {
   });

@@ -41,18 +41,21 @@ self = module.exports = {
   },
 
   populate_product_table: function populate_product_table(store, locale, product_table) {
-    var key = store + ':' + locale + 'product_table';
-
-    // redisExists(key).then(function callback(response) {
-    //   if (response === 0) {
-    //     self.populate_product_table(store, locale, product_table);
-    //   }
-    // });
+    var key = store + ':' + locale + ':product_table';
 
     // console.log(typeof product_table);
-    product_table.map(function callback(value, index) {
+    // console.log(product_table);
+
+    return Promise.all(Object.keys(product_table).map(function callback(id) {
+      console.log(id);
+      return redis.hmset(key + ':' + id, product_table[id]);
+    }));
+
+    // product_table.map(function callback(value, index) {
+      // console.log(value);
       // r.sadd(key, value);
       // amazon:UK:product_table:BS324343
+/*
       r.hmset(key, {
         "ASIN": '02',
         'all_fields': JSON.stringify({'title': 'some title', 'price': '5.99'})
@@ -63,7 +66,8 @@ self = module.exports = {
           console.log(response);
         }
       });
-    });
+*/
+    // });
   },
 
   update_stock_table: function update_stock_table() {
