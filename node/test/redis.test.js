@@ -118,13 +118,7 @@ describe('Redis', function() {
 
       redis.populate_stock_table(store, locale, stock_table).then(function callback() {
         r.smembers('amazon:UK:stock_table').then(function(response) {
-          var response_array = Array.prototype.slice.call(response);
-
-          function are_arrs_equal(arr1, arr2) {
-            return arr1.sort().toString() === arr2.sort().toString();
-          }
-
-          assert.ok(are_arrs_equal(stock_table, response_array));
+          assert.sameDeepMembers(stock_table, response);
           done();
         });
       });
