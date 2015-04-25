@@ -141,7 +141,6 @@ var self = module.exports = {
     payload.map(function callback(product) {
       new_payload[product.ASIN] = {
         ASIN: _.first(product.ASIN),
-        // inStock: isInStock, <<-- pass off to function
         url: _.first(product.DetailPageURL),
         name: _.first(product.ItemAttributes[0].Edition),
         title: _.first(product.ItemAttributes[0].Title),

@@ -42,7 +42,9 @@ self = module.exports = {
     }));
   },
 
-  update_stock_table: function update_stock_table() {
+  update_stock_table: function update_stock_table(store, locale, stock_table) {
+    var current_stock = store + ':' + locale + ':stock_table';
+    var new_stock = store + ':' + locale + ':new_stock_table';
     console.log('update stock table called');
     console.log('spy not stopping this from being called');
     /*
@@ -67,6 +69,28 @@ self = module.exports = {
 
     SINTER current_stock new_stock = stock that didn't change
 
+    */
+    // should create a new stock table
+    redis.sadd(new_stock, stock_table);
+
+    // should return and broadcast the new in stock changes
+    redis.sdiffstore(new_stock, current_stock)
+    .then(function callback(response) {
+      redis.publish('in_stock_changes', response);
+    });
+
+    // should return and broadcast the new out of stock changes
+    redis.sdiffstore(current_stock, new_stock)
+    .then(function callback(response) {
+      redis.publish('out_stock_changes', response);
+    });
+
+    // should overwrite the current stock with the new stock table
+    redis.sdiffstore(current_stock, new_stock);
+    // should delete the new stock table.
+    redis.del(new_stock);
+
+    /*
 
     sadd new_stock "2 4 5"
     sdiffstore in_stock_changes new_stock old_stock <--- subscribe to this event/key for new in stock
@@ -144,18 +168,6 @@ self = module.exports = {
     // } else {
     //   self.update_stock_table();
     // }
-  },
-
-  save: function save(response) {
-
-    // r.hmset("product:2", {
-    //   "ASIN": '02',
-    //   "is_in_stock": false,
-    //   'all_fields': JSON.stringify({'title': 'some title', 'price': '5.99'})
-    // }, function(err, response) {
-    //   console.log(response);
-    // });
-
   }
 
 };
