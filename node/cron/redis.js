@@ -1,6 +1,7 @@
 'use strict';
 var Redis = require('ioredis');
 var redis = new Redis();
+var diff = require('deep-diff').diff;
 
 // var redis = require('redis');
 var Promise = require('bluebird');
@@ -71,24 +72,33 @@ self = module.exports = {
 
     */
     // should create a new stock table
-    redis.sadd(new_stock, stock_table);
+    redis.sadd(new_stock, stock_table).then(function callback() {
+      // should return and broadcast the new in stock changes
+      var in_stock = redis.sdiffstore(new_stock, current_stock)
+      .then(function callback(response) {
+        redis.publish('in_stock_changes', response);
+      });
 
-    // should return and broadcast the new in stock changes
-    redis.sdiffstore(new_stock, current_stock)
-    .then(function callback(response) {
-      redis.publish('in_stock_changes', response);
-    });
+      // should return and broadcast the new out of stock changes
+      var out_stock = redis.sdiffstore(current_stock, new_stock)
+      .then(function callback(response) {
+        redis.publish('out_stock_changes', response);
+      });
 
-    // should return and broadcast the new out of stock changes
-    redis.sdiffstore(current_stock, new_stock)
-    .then(function callback(response) {
-      redis.publish('out_stock_changes', response);
+      return Promise.all([in_stock, out_stock]);
+      // return [in_stock, out_stock];
+    })
+    .then(function callback() {
+      return redis.sdiffstore(current_stock, new_stock);
+    })
+    .then(function callback() {
+      return redis.del(new_stock);
     });
 
     // should overwrite the current stock with the new stock table
-    redis.sdiffstore(current_stock, new_stock);
+    // redis.sdiffstore(current_stock, new_stock);
     // should delete the new stock table.
-    redis.del(new_stock);
+    // redis.del(new_stock);
 
     /*
 
