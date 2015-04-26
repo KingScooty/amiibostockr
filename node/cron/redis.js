@@ -78,15 +78,12 @@ self = module.exports = {
       .then(function callback(response) {
         redis.publish('in_stock_changes', response);
       });
-
       // should return and broadcast the new out of stock changes
       var out_stock = redis.sdiffstore(current_stock, new_stock)
       .then(function callback(response) {
         redis.publish('out_stock_changes', response);
       });
-
       return Promise.all([in_stock, out_stock]);
-      // return [in_stock, out_stock];
     })
     .then(function callback() {
       return redis.sdiffstore(current_stock, new_stock);

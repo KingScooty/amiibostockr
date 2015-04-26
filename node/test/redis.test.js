@@ -166,6 +166,14 @@ describe('Redis', function() {
     });
   });
   describe('#update_stock_table()', function() {
+    // Hmm. This function does a bit too much.
+    // Maybe break it down into smaller pieces.
+    it('should create a new stock table', function() {});
+    it('should broadcast the new in stock changes', function() {});
+    it('should broadcast the new out of stock changes', function() {});
+    it('should return a promise once in stock and out stock changes complete', function() {});
+    it('should overwrite current_stock_table with new_stock_table', function() {});
+    it('should delete new_stock_table', function() {});
   });
   describe('Save to redis', function() {
   });
