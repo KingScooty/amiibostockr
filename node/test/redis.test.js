@@ -182,6 +182,8 @@ describe('Redis', function() {
   });
 
   describe('Redis utils', function() {
+    // The 2 diffs are the only 2 products that differ from
+    // stock_table.
     var new_stock_table = [
       'B00Q6A56DY',
       'B00Q6A57A2', // diff
@@ -193,6 +195,18 @@ describe('Redis', function() {
     var new_stock_diff = [
       'B00Q6A57A2',
       'B00N8PBTDS'
+    ];
+
+    // Should show all the ones that are removed when new_stock_table
+    // comes in to replace current_stock.
+    var out_stock_diff = [
+      'B00Q6A57J2',
+      'B00N8PBYK4',
+      'B00N8PBTVS',
+      'B00N8PBOFO',
+      'B00N8PBQDE',
+      'B00N8PBGV6',
+      'B00N8PBMK6'
     ];
 
     afterEach(function() {
@@ -219,7 +233,7 @@ describe('Redis', function() {
         });
       });
 
-      it('should return a list of in stock', function(done) {
+      it('should return a list of in stock product ids', function(done) {
         redis.get_in_stock_changes(new_stock_key, current_stock_key).then(function(members) {
           assert.sameMembers(new_stock_diff, members);
           done();
@@ -228,7 +242,6 @@ describe('Redis', function() {
     });
 
     describe('#broadcast_in_stock_changes()', function() {
-
       var r1 = new Redis();
 
       before(function(done) {
@@ -251,7 +264,21 @@ describe('Redis', function() {
       });
     });
 
-    describe('#get_out_stock_changes()', function() {});
+    describe('#get_out_stock_changes()', function() {
+      before(function(done) {
+        redis.create_new_stock_table(new_stock_key, new_stock_table);
+        redis.populate_stock_table(store, locale, stock_table).then(function() {
+          done();
+        });
+      });
+
+      it('should return a list of out stock product ids', function(done) {
+        redis.get_out_stock_changes(current_stock_key, new_stock_key).then(function(members) {
+          assert.sameMembers(out_stock_diff, members);
+          done();
+        });
+      });
+    });
     describe('#broadcast_out_stock_changes()', function() {});
     describe('#replace_current_stock_with_new_stock()', function() {});
     describe('#delete_new_stock_table()', function() {});
