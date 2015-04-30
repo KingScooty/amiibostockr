@@ -23,7 +23,7 @@ var O = require('observed');
 */
 
 describe('Pub Sub functionality', function() {
-  describe('Redis testing', function () {
+  describe('Redis testing', function() {
     /*
 
     http://stackoverflow.com/questions/4441798/how-to-use-redis-publish-subscribe-with-nodejs-to-notify-clients-when-data-value

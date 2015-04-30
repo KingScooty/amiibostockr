@@ -1,7 +1,7 @@
 'use strict';
 var Redis = require('ioredis');
 var redis = new Redis();
-var diff = require('deep-diff').diff;
+// var diff = require('deep-diff').diff;
 
 // var redis = require('redis');
 var Promise = require('bluebird');
@@ -43,6 +43,41 @@ self = module.exports = {
     }));
   },
 
+  /*
+   * Utils
+   */
+
+  create_new_stock_table: function create_stock_table(new_stock, stock_table) {
+    return redis.sadd(new_stock, stock_table);
+  },
+
+  get_in_stock_changes: function get_in_stock_changes(new_stock, current_stock) {
+    return redis.sdiff(new_stock, current_stock);
+  },
+
+  broadcast_in_stock_changes: function broadcast_in_stock_changes(response) {
+    return redis.publish('in_stock_changes', JSON.stringify(response));
+  },
+
+  get_out_stock_changes: function get_out_stock_changes(current_stock, new_stock) {
+    return redis.sdiff(current_stock, new_stock);
+  },
+
+  broadcast_out_stock_changes: function broadcast_out_stock_changes(response) {
+    return redis.publish('out_stock_changes', response);
+  },
+
+  replace_current_stock_with_new_stock: function replace_current_stock_with_new_stock(current_stock, new_stock) {
+    return redis.sdiffstore(current_stock, new_stock);
+  },
+
+  delete_new_stock_table: function delete_new_stock_table(new_stock) {
+    return redis.del(new_stock);
+  },
+
+  /*
+   */
+
   update_stock_table: function update_stock_table(store, locale, stock_table) {
     var current_stock = store + ':' + locale + ':stock_table';
     var new_stock = store + ':' + locale + ':new_stock_table';
@@ -71,17 +106,46 @@ self = module.exports = {
     SINTER current_stock new_stock = stock that didn't change
 
     */
+
+    return self.create_new_stock_table(new_stock, stock_table)
+    .then(function callback() {
+      return Promise.join(
+        self.get_in_stock_changes(new_stock, current_stock)
+          .then(self.broadcast_in_stock_changes),
+
+        self.get_out_stock_changes(current_stock, new_stock)
+          .then(self.broadcast_out_stock_changes)
+      );
+    })
+    .then(function callback() {
+      return self.replace_current_stock_with_new_stock(current_stock, new_stock);
+    })
+    .then(function callback() {
+      return self.delete_new_stock_table(new_stock);
+    });
+
+    //   get_in_stock_changes()
+    //     broadcast_in_stock_changes()
+    //   get_out_stock_changes()
+    //     broadcast_out_stock_changes()
+    //
+    // replace_current_stock_with_new_stock()
+    // delete_new_stock_table()
+
+/*
     // should create a new stock table
-    redis.sadd(new_stock, stock_table).then(function callback() {
+    return redis.sadd(new_stock, stock_table).then(function callback() {
       // should return and broadcast the new in stock changes
-      var in_stock = redis.sdiffstore(new_stock, current_stock)
+      console.log(new_stock, current_stock);
+      var in_stock = redis.sdiff(new_stock, current_stock)
       .then(function callback(response) {
-        redis.publish('in_stock_changes', response);
+        console.log(response);
+        return redis.publish('in_stock_changes', response);
       });
       // should return and broadcast the new out of stock changes
-      var out_stock = redis.sdiffstore(current_stock, new_stock)
+      var out_stock = redis.sdiff(current_stock, new_stock)
       .then(function callback(response) {
-        redis.publish('out_stock_changes', response);
+        return redis.publish('out_stock_changes', response);
       });
       return Promise.all([in_stock, out_stock]);
     })
@@ -91,7 +155,7 @@ self = module.exports = {
     .then(function callback() {
       return redis.del(new_stock);
     });
-
+*/
     // should overwrite the current stock with the new stock table
     // redis.sdiffstore(current_stock, new_stock);
     // should delete the new stock table.
