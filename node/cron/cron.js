@@ -1,8 +1,8 @@
 var CronJob = require('cron').CronJob;
 
-/** 
+/*
  * Generate crons based on locales
- */ 
+ */
 
 // runs every 5 seconds
 exports.job = function (task) {
