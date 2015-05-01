@@ -3,8 +3,10 @@ var CronJob = require('cron').CronJob;
 var amazon = require('./amazon');
 var redis = require('./redis');
 
-var Redis = require('ioredis');
-var r = new Redis();
+// var Redis = require('ioredis');
+// var r = new Redis();
+
+require('./twitter');
 
 /**
 
@@ -43,12 +45,6 @@ update stock table
 // var publisher = require('./publisher');
 
 //
-r.subscribe('in_stock_changes');
-r.on('message', function(channel, message) {
-  var in_stock_message = JSON.parse(message);
-  console.log('Broadcast:');
-  console.log(in_stock_message);
-});
 
 var job = new CronJob({
   cronTime: '*/20 * * * * *',
