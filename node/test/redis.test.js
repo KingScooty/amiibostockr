@@ -348,42 +348,44 @@ describe('Redis', function() {
     });
   });
 
-  describe('#update_stock_table()', function() {
-    var r1 = new Redis();
-    var r2 = new Redis();
+  describe('Final chained event', function() {
+    describe('#update_stock_table()', function() {
+      var r1 = new Redis();
+      var r2 = new Redis();
 
-    before(function(done) {
-      r1.subscribe('in_stock_changes');
-      r2.subscribe('out_stock_changes');
+      before(function(done) {
+        r1.subscribe('in_stock_changes');
+        r2.subscribe('out_stock_changes');
 
-      redis.populate_stock_table(store, locale, stock_table).then(function() {
-        done();
-      });
-    });
-
-    after(function() {
-      r1.unsubscribe();
-      r2.unsubscribe();
-
-      r.flushdb();
-    });
-
-    it('should run all the chained util events and broadcast to 2 streams', function(done) {
-      var in_stock_message;
-      var out_stock_message;
-
-      r1.on('message', function(channel, message) {
-        in_stock_message = JSON.parse(message);
+        redis.populate_stock_table(store, locale, stock_table).then(function() {
+          done();
+        });
       });
 
-      r2.on('message', function(channel, message) {
-        out_stock_message = JSON.parse(message);
+      after(function() {
+        r1.unsubscribe();
+        r2.unsubscribe();
+
+        r.flushdb();
       });
 
-      redis.update_stock_table(store, locale, new_stock_table).then(function() {
-        assert.sameMembers(new_stock_diff, in_stock_message);
-        assert.sameMembers(out_stock_diff, out_stock_message);
-        done();
+      it('should run all the chained util events and broadcast to 2 streams', function(done) {
+        var in_stock_message;
+        var out_stock_message;
+
+        r1.on('message', function(channel, message) {
+          in_stock_message = JSON.parse(message);
+        });
+
+        r2.on('message', function(channel, message) {
+          out_stock_message = JSON.parse(message);
+        });
+
+        redis.update_stock_table(store, locale, new_stock_table).then(function() {
+          assert.sameMembers(new_stock_diff, in_stock_message);
+          assert.sameMembers(out_stock_diff, out_stock_message);
+          done();
+        });
       });
     });
   });

@@ -9,13 +9,6 @@ var Promise = require('bluebird');
 
 var self;
 
-// var r = redis.createClient();
-// var redisExists = Promise.promisify(r.exists, r);
-
-// r.on('error', function callback(err) {
-//   console.log('Error ' + err);
-// });
-
 /*
 
 init
@@ -131,24 +124,9 @@ self = module.exports = {
     var key1 = store + ':' + locale + 'stock_table';
     var key2 = store + ':' + locale + 'product_table';
 
-    // self.populate_stock_table(store, locale, stock_table);
-    // self.populate_product_table(store, locale, stock_table);
-
-
-    // var keys_exist = false;
-
-    // return new Promise(function promise(resolve, reject) {
-    // return Promise.all([r.exists('key1'), r.exists('key2')], function() {
-    //   console.log('hello?')
-    // });
-
-    // return Promise.all([redisExists(key1), redisExists(key2)]).then(function callback(response) {
     return Promise.all([redis.exists(key1), redis.exists(key2)]).then(function callback(response) {
-      // console.log(response);
       if ((response[0] === 0) || (response[1] === 0)) {
-        // console.log('0 0 baby!');
         if (response[0] === 0) {
-          // console.log('this should be called');
           self.populate_stock_table(store, locale, stock_table);
         }
         if (response[1] === 0) {
@@ -158,31 +136,5 @@ self = module.exports = {
         self.update_stock_table();
       }
     });
-
-    // /*
-    //  * Catch errors.
-    //  */
-    // .catch(function callback(e) {
-    //   console.log('Exception ' + e);
-    // });
-
-    // redisExists(key1).then(function callback(response) {
-    //   if (response === 0) {
-    //     self.populate_stock_table(store, locale, stock_table);
-    //   }
-    // });
-    //
-    // redisExists(key2).then(function callback(response) {
-    //   if (response === 0) {
-    //     self.populate_product_table(store, locale, product_table);
-    //   }
-    // });
-
-    // if ((!r.exists(key1)) || (!r.exists(key2))) {
-    //   self.initialise_redis_tables(store, locale, stock_table, product_table);
-    // } else {
-    //   self.update_stock_table();
-    // }
   }
-
 };
