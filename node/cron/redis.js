@@ -47,32 +47,32 @@ self = module.exports = {
    * Utils
    */
 
-  create_new_stock_table: function create_stock_table(new_stock, stock_table) {
-    return redis.sadd(new_stock, stock_table);
+  create_new_stock_table: function create_stock_table(new_stock_key, stock_table) {
+    return redis.sadd(new_stock_key, stock_table);
   },
 
-  get_in_stock_changes: function get_in_stock_changes(current_stock, new_stock) {
-    return redis.sdiff(new_stock, current_stock);
+  get_in_stock_changes: function get_in_stock_changes(current_stock_key, new_stock_key) {
+    return redis.sdiff(new_stock_key, current_stock_key);
   },
 
   broadcast_in_stock_changes: function broadcast_in_stock_changes(response) {
     return redis.publish('in_stock_changes', JSON.stringify(response));
   },
 
-  get_out_stock_changes: function get_out_stock_changes(current_stock, new_stock) {
-    return redis.sdiff(current_stock, new_stock);
+  get_out_stock_changes: function get_out_stock_changes(current_stock_key, new_stock_key) {
+    return redis.sdiff(current_stock_key, new_stock_key);
   },
 
   broadcast_out_stock_changes: function broadcast_out_stock_changes(response) {
     return redis.publish('out_stock_changes', JSON.stringify(response));
   },
 
-  replace_current_stock_with_new_stock: function replace_current_stock_with_new_stock(current_stock, new_stock) {
-    return redis.sdiffstore(current_stock, new_stock);
+  replace_current_stock_with_new_stock: function replace_current_stock_with_new_stock(current_stock_key, new_stock_key) {
+    return redis.sdiffstore(current_stock_key, new_stock_key);
   },
 
-  delete_new_stock_table: function delete_new_stock_table(new_stock) {
-    return redis.del(new_stock);
+  delete_new_stock_table: function delete_new_stock_table(new_stock_key) {
+    return redis.del(new_stock_key);
   },
 
   /*
