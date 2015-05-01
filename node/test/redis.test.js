@@ -337,47 +337,13 @@ describe('Redis', function() {
           });
         });
       });
-      // describe('#update_stock_table()', function() {});
     });
-
-    // var store = 'amazon';
-    // var locale = 'UK';
-    // var stock_table = payload.stock_table;
-
-    // var r1;
-
-    // var expected_response = product_table.B00Q6A57J2;
-    // var returned_response;
-    before(function(done) {
-      redis.populate_stock_table(store, locale, stock_table).then(function() {
-        done();
+  });
+  describe('#update_stock_table()', function() {
+    it('should run all the chained util events', function() {
+      redis.update_stock_table(store, locale, stock_table).then(function() {
+        console.log('did it get this far?');
       });
     });
-
-    beforeEach(function() {
-      // r1 = new Redis();
-    });
-
-    afterEach(function() {
-      // r.flushdb();
-    });
-
-
-    // it('should create a new stock table', function() {
-      // r1.subscribe('in_stock_changes');
-      // r1.on('message', function(channel, message) {
-      //   console.log(channel + ': ' + message);
-      //   assert(true);
-      //   done();
-      // });
-      // redis.update_stock_table(store, locale, stock_table);
-    // });
-    // it('should broadcast the new in stock changes', function() {});
-    // it('should broadcast the new out of stock changes', function() {});
-    // it('should return a promise once in stock and out stock changes complete', function() {});
-    // it('should overwrite current_stock_table with new_stock_table', function() {});
-    // it('should delete new_stock_table', function() {});
-  });
-  describe('Save to redis', function() {
   });
 });
