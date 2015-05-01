@@ -33,6 +33,33 @@ describe('Redis', function() {
   // amazon:UK:new_stock_table
   var new_stock_key = store + ':' + locale + ':new_stock_table';
 
+  // The 2 diffs are the only 2 products that differ from
+  // stock_table.
+  var new_stock_table = [
+    'B00Q6A56DY',
+    'B00Q6A57A2', // diff
+    'B00N8PBTDS', // diff
+    'B00QGBNLTO',
+    'B00QGBNLU8'
+  ];
+
+  var new_stock_diff = [
+    'B00Q6A57A2',
+    'B00N8PBTDS'
+  ];
+
+  // Should show all the ones that are removed when new_stock_table
+  // comes in to replace current_stock.
+  var out_stock_diff = [
+    'B00Q6A57J2',
+    'B00N8PBYK4',
+    'B00N8PBTVS',
+    'B00N8PBOFO',
+    'B00N8PBQDE',
+    'B00N8PBGV6',
+    'B00N8PBMK6'
+  ];
+
   describe('#process_data()', function() {
     var stub__populate_stock;
     var stub__populate_products;
@@ -182,33 +209,6 @@ describe('Redis', function() {
   });
 
   describe('Redis utils', function() {
-    // The 2 diffs are the only 2 products that differ from
-    // stock_table.
-    var new_stock_table = [
-      'B00Q6A56DY',
-      'B00Q6A57A2', // diff
-      'B00N8PBTDS', // diff
-      'B00QGBNLTO',
-      'B00QGBNLU8'
-    ];
-
-    var new_stock_diff = [
-      'B00Q6A57A2',
-      'B00N8PBTDS'
-    ];
-
-    // Should show all the ones that are removed when new_stock_table
-    // comes in to replace current_stock.
-    var out_stock_diff = [
-      'B00Q6A57J2',
-      'B00N8PBYK4',
-      'B00N8PBTVS',
-      'B00N8PBOFO',
-      'B00N8PBQDE',
-      'B00N8PBGV6',
-      'B00N8PBMK6'
-    ];
-
     before(function() {
       r.flushdb();
     });
@@ -262,6 +262,10 @@ describe('Redis', function() {
           r1.subscribe('in_stock_changes');
         });
 
+        after(function() {
+          r1.unsubscribe();
+        });
+
         it('should broadcast latest IN stock changes via pub/sub', function(done) {
           r1.on('message', function(channel, message) {
             assert.sameMembers(new_stock_diff, JSON.parse(message));
@@ -287,6 +291,10 @@ describe('Redis', function() {
 
         before(function() {
           r1.subscribe('out_stock_changes');
+        });
+
+        after(function() {
+          r1.unsubscribe();
         });
 
         it('should broadcast latest OUT stock changes via pub/sub', function(done) {
@@ -339,10 +347,43 @@ describe('Redis', function() {
       });
     });
   });
+
   describe('#update_stock_table()', function() {
-    it('should run all the chained util events', function() {
-      redis.update_stock_table(store, locale, stock_table).then(function() {
-        console.log('did it get this far?');
+    var r1 = new Redis();
+    var r2 = new Redis();
+
+    before(function(done) {
+      r1.subscribe('in_stock_changes');
+      r2.subscribe('out_stock_changes');
+
+      redis.populate_stock_table(store, locale, stock_table).then(function() {
+        done();
+      });
+    });
+
+    after(function() {
+      r1.unsubscribe();
+      r2.unsubscribe();
+
+      r.flushdb();
+    });
+
+    it('should run all the chained util events and broadcast to 2 streams', function(done) {
+      var in_stock_message;
+      var out_stock_message;
+
+      r1.on('message', function(channel, message) {
+        in_stock_message = JSON.parse(message);
+      });
+
+      r2.on('message', function(channel, message) {
+        out_stock_message = JSON.parse(message);
+      });
+
+      redis.update_stock_table(store, locale, new_stock_table).then(function() {
+        assert.sameMembers(new_stock_diff, in_stock_message);
+        assert.sameMembers(out_stock_diff, out_stock_message);
+        done();
       });
     });
   });

@@ -81,31 +81,6 @@ self = module.exports = {
   update_stock_table: function update_stock_table(store, locale, stock_table) {
     var current_stock = store + ':' + locale + ':stock_table';
     var new_stock = store + ':' + locale + ':new_stock_table';
-    console.log('update stock table called');
-    console.log('spy not stopping this from being called');
-    /*
-    Redis stock set already exists.
-      e.g [val1, val5, val3, val8]
-
-    New stock list comes through
-      e.g [val1, val3, val8, val9]
-
-    The difference SDIFF = val5, val9.
-    However, this isn't enough info. We need to know more.
-
-    val5 is being removed, while val9 is being introduced. How do we track this?
-
-    SINTER current_stock new_stock
-    = values that exist in both.
-
-    FOUND IT!
-
-    SDIFF current_stock new_stock = out of stock items
-    SDIFF new_stock current_stock = NEW STOCK items!
-
-    SINTER current_stock new_stock = stock that didn't change
-
-    */
 
     return self.create_new_stock_table(new_stock, stock_table)
     .then(function callback() {
@@ -124,38 +99,7 @@ self = module.exports = {
       return self.delete_new_stock_table(new_stock);
     });
 
-    //   get_in_stock_changes()
-    //     broadcast_in_stock_changes()
-    //   get_out_stock_changes()
-    //     broadcast_out_stock_changes()
-    //
-    // replace_current_stock_with_new_stock()
-    // delete_new_stock_table()
 
-/*
-    // should create a new stock table
-    return redis.sadd(new_stock, stock_table).then(function callback() {
-      // should return and broadcast the new in stock changes
-      console.log(new_stock, current_stock);
-      var in_stock = redis.sdiff(new_stock, current_stock)
-      .then(function callback(response) {
-        console.log(response);
-        return redis.publish('in_stock_changes', response);
-      });
-      // should return and broadcast the new out of stock changes
-      var out_stock = redis.sdiff(current_stock, new_stock)
-      .then(function callback(response) {
-        return redis.publish('out_stock_changes', response);
-      });
-      return Promise.all([in_stock, out_stock]);
-    })
-    .then(function callback() {
-      return redis.sdiffstore(current_stock, new_stock);
-    })
-    .then(function callback() {
-      return redis.del(new_stock);
-    });
-*/
     // should overwrite the current stock with the new stock table
     // redis.sdiffstore(current_stock, new_stock);
     // should delete the new stock table.
