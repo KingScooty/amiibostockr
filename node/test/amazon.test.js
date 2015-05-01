@@ -16,7 +16,7 @@ var amazon = require('../cron/amazon');
  * Fixtures
  */
 
-// var amazon_response_UK = require('./fixtures/amazon_response_UK');
+var amazon_response_UK = require('./fixtures/amazon_response_UK');
 
 /*
   Journey:
@@ -105,17 +105,164 @@ describe('Query Amazon advertising API', function() {
     {'ASIN': 9}
   ];
 
-  beforeEach(function() {
-  });
+  var stub__query;
 
-  describe('batch query', function() {
-    it('should populate the arguments object to be sent with Query', function(done) {
-      sinon.stub(amazon, 'query', query);
+  Object.size = function(obj) {
+    var size = 0;
+    var key;
+    for (key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        size++;
+      }
+    }
+    return size;
+  };
 
+  describe('#batch_query()', function() {
+    beforeEach(function() {
+      stub__query = sinon.stub(amazon, 'query', query);
+    });
+
+    afterEach(function() {
+      stub__query.restore();
+    });
+
+    it('should call query() 4 times', function() {
+      amazon.batch_query('UK');
+      assert.ok(stub__query.called);
+      assert.equal(stub__query.callCount, 4);
+    });
+    it('should return a flattened payload from running query() 4 times', function(done) {
       amazon.batch_query('UK').then(function(payload) {
+        assert.equal(stub__query.callCount, 4);
         assert.deepEqual(payload, expected);
         done();
       });
     });
+  });
+
+  describe('#is_in_stock()', function() {
+    it('should return 10 ASIN codes in an array', function() {
+      var products_in_stock = amazon.generate_in_stock_table(amazon_response_UK);
+      assert.typeOf(products_in_stock, 'array');
+      assert.lengthOf(products_in_stock, 10);
+    });
+  });
+
+  describe('#generate_product_table()', function() {
+    var response = amazon.generate_product_table(amazon_response_UK);
+    var first_key = Object.keys(response)[0];
+    var product = response[first_key];
+
+    it('should return an object', function() {
+      assert.typeOf(response, 'object');
+    });
+    it('should should return an object with 35 products', function() {
+      assert.equal(Object.size(response), 35);
+    });
+    it('should strip each product down to 7 key pairs', function() {
+      assert.typeOf(product, 'object');
+      assert.equal(Object.size(product), 7);
+    });
+
+    describe('response.product object', function() {
+      it('should have an ASIN property', function() {
+        assert.ok(product.hasOwnProperty('ASIN'));
+        assert.typeOf(product.ASIN, 'string');
+      });
+      it('should have a url property', function() {
+        assert.ok(product.hasOwnProperty('url'));
+        assert.typeOf(product.url, 'string');
+      });
+      it('should have a name property', function() {
+        assert.ok(product.hasOwnProperty('name'));
+        assert.typeOf(product.name, 'string');
+      });
+      it('should have a title property', function() {
+        assert.ok(product.hasOwnProperty('title'));
+        assert.typeOf(product.title, 'string');
+      });
+      it('should have a date property', function() {
+        assert.ok(product.hasOwnProperty('date'));
+        assert.typeOf(product.date, 'string');
+      });
+      it('should have a OffersSummary property', function() {
+        assert.ok(product.hasOwnProperty('OffersSummary'));
+        assert.typeOf(product.OffersSummary, 'string');
+      });
+      it('should have a Offers property', function() {
+        assert.ok(product.hasOwnProperty('Offers'));
+        assert.typeOf(product.Offers, 'string');
+      });
+    });
+  });
+
+  describe('#init()', function() {
+    // Stub for amazon.batch_query()
+    var batch_query = function batch_query() {
+      return new Promise(function promise(resolve) {
+        resolve(amazon_response_UK);
+      });
+    };
+
+    var stub__batch_query;
+    var spy_generate_in_stock_table;
+    var spy_generate_product_table;
+    var init_response;
+
+    beforeEach(function() {
+      spy_generate_in_stock_table = sinon.spy(amazon, 'generate_in_stock_table');
+      spy_generate_product_table = sinon.spy(amazon, 'generate_product_table');
+      stub__batch_query = sinon.stub(amazon, 'batch_query', batch_query);
+    });
+
+    afterEach(function() {
+      spy_generate_in_stock_table.restore();
+      spy_generate_product_table.restore();
+      stub__batch_query.restore();
+    });
+
+    it('should call batch_query() once', function() {
+      amazon.init('UK');
+      assert.ok(stub__batch_query.calledOnce);
+    });
+    it('should then call generate_in_stock_table()', function(done) {
+      amazon.init('UK').then(function() {
+        assert.ok(spy_generate_in_stock_table.calledOnce);
+        done();
+      });
+    });
+    it('should then call generate_product_table()', function(done) {
+      amazon.init('UK').then(function() {
+        assert.ok(spy_generate_product_table.calledOnce);
+        done();
+      });
+    });
+    it('should return an object with 4 fields', function(done) {
+      amazon.init('UK').then(function(response) {
+        assert.typeOf(response, 'object');
+        assert.equal(Object.size(response), 4);
+        init_response = response;
+        done();
+      });
+    });
+    // describe('init() response object', function() {
+    it('should return an object with a store property', function() {
+      assert.ok(init_response.hasOwnProperty('store'));
+      assert.typeOf(init_response.store, 'string');
+    });
+    it('should return an object with a locale property', function() {
+      assert.ok(init_response.hasOwnProperty('locale'));
+      assert.typeOf(init_response.locale, 'string');
+    });
+    it('should return an object with a in_stock_table property', function() {
+      assert.ok(init_response.hasOwnProperty('in_stock_table'));
+      assert.typeOf(init_response.in_stock_table, 'array');
+    });
+    it('should return an object with a product_table property', function() {
+      assert.ok(init_response.hasOwnProperty('product_table'));
+      assert.typeOf(init_response.product_table, 'object');
+    });
+    // });
   });
 });

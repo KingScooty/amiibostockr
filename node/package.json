@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "nodemon ./bin/www",
-     "test": "./node_modules/.bin/mocha --reporter spec"
+    "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "dependencies": {
     "amazon-product-api": "git+https://github.com/KingScooty/amazon-product-api.git",
@@ -16,6 +16,7 @@
     "deep-diff": "^0.3.1",
     "express": "~4.12.2",
     "hiredis": "^0.3.0",
+    "ioredis": "^1.0.6",
     "jade": "~1.9.2",
     "lodash": "^3.6.0",
     "morgan": "~1.5.1",
@@ -27,6 +28,7 @@
   "devDependencies": {
     "chai": "^2.2.0",
     "mocha": "^2.2.4",
+    "rewire": "^2.3.1",
     "sinon": "^1.14.1"
   }
 }
