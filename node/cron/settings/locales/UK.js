@@ -45,8 +45,8 @@ module.exports = {
   DOMAIN      : 'webservices.amazon.co.uk',
 
   CREDS : {
-    awsId: process.env.AWSIDUS,
-    awsSecret: process.env.AWSSECRETUS,
+    awsId: process.env.AWSIDUK,
+    awsSecret: process.env.AWSSECRETUK,
     awsTag: 'kings0b-21'
   }
 

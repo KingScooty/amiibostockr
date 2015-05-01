@@ -41,25 +41,17 @@ var self = module.exports = {
    * @return {response} response
    */
 
-  query: function query(client, product_array, domain) {
+  query: function query(client, product_chunks, domain) {
     var args = {
         idType: 'ASIN',
         Condition: 'New',
-        includeReviewsSummary: false,
-        itemId: product_array.toString(),
+        includeReviewsSummary: 'false',
+        itemId: product_chunks.toString(),
         responseGroup: 'ItemAttributes,Offers', // Images
         domain: domain
     };
 
-    return new Promise(function promise(resolve, reject) {
-      client.itemLookup(args, function callback(err, response) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(response);
-        }
-      });
-    });
+    return client.itemLookup(args);
   },
 
   /**
@@ -76,20 +68,27 @@ var self = module.exports = {
      * Generate args based on locale.
      * Grab constants from relevant locale settings file.
      */
-    var args = {
-      client: self.create_client(settings[locale].CREDS),
-      product_chunks: settings[locale].ASIN_CHUNKS,
-      domain: settings[locale].DOMAIN
-    };
+    // var args = {
+    //   client: self.create_client(settings[locale].CREDS),
+    //   product_chunks: settings[locale].ASIN_CHUNKS,
+    //   domain: settings[locale].DOMAIN
+    // };
+    var client = self.create_client(settings[locale].CREDS);
+    var domain = settings[locale].DOMAIN;
+    var product_chunks = settings[locale].ASIN_CHUNKS;
 
     /*
      * Wait for all queries to return before returning callback
      */
-    return Promise.all(args.product_chunks.map(function callback() {
+    return Promise.all(product_chunks.map(function callback(val, index) {
       /*
        * Return response for one query
        */
-      return self.query(args);
+      return self.query(
+        client,
+        product_chunks[index],
+        domain
+      );
     }))
 
     /*

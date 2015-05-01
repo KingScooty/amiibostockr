@@ -2,7 +2,7 @@
 var assert = require('chai').assert;
 // var assert = require("assert");
 
-var _ = require('lodash');
+// var _ = require('lodash');
 // var O = require('observed');
 var sinon = require('sinon');
 
