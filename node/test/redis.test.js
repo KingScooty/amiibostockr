@@ -234,7 +234,7 @@ describe('Redis', function() {
       });
 
       it('should return a list of in stock product ids', function(done) {
-        redis.get_in_stock_changes(new_stock_key, current_stock_key).then(function(members) {
+        redis.get_in_stock_changes(current_stock_key, new_stock_key).then(function(members) {
           assert.sameMembers(new_stock_diff, members);
           done();
         });
@@ -258,7 +258,7 @@ describe('Redis', function() {
           assert.sameMembers(new_stock_diff, JSON.parse(message));
           done();
         });
-        redis.get_in_stock_changes(new_stock_key, current_stock_key).then(function(members) {
+        redis.get_in_stock_changes(current_stock_key, new_stock_key).then(function(members) {
           redis.broadcast_in_stock_changes(members);
         });
       });
@@ -279,7 +279,30 @@ describe('Redis', function() {
         });
       });
     });
-    describe('#broadcast_out_stock_changes()', function() {});
+
+    describe('#broadcast_out_stock_changes()', function() {
+      var r1 = new Redis();
+
+      before(function(done) {
+        redis.create_new_stock_table(new_stock_key, new_stock_table);
+        redis.populate_stock_table(store, locale, stock_table).then(function() {
+          done();
+        });
+
+        r1.subscribe('out_stock_changes');
+      });
+
+      it('should broadcast latest OUT stock changes via pub/sub', function(done) {
+        r1.on('message', function(channel, message) {
+          assert.sameMembers(out_stock_diff, JSON.parse(message));
+          done();
+        });
+        redis.get_out_stock_changes(current_stock_key, new_stock_key).then(function(members) {
+          redis.broadcast_out_stock_changes(members);
+        });
+      });
+    });
+
     describe('#replace_current_stock_with_new_stock()', function() {});
     describe('#delete_new_stock_table()', function() {});
     describe('#update_stock_table()', function() {

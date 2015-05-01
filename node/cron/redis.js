@@ -51,7 +51,7 @@ self = module.exports = {
     return redis.sadd(new_stock, stock_table);
   },
 
-  get_in_stock_changes: function get_in_stock_changes(new_stock, current_stock) {
+  get_in_stock_changes: function get_in_stock_changes(current_stock, new_stock) {
     return redis.sdiff(new_stock, current_stock);
   },
 
@@ -64,7 +64,7 @@ self = module.exports = {
   },
 
   broadcast_out_stock_changes: function broadcast_out_stock_changes(response) {
-    return redis.publish('out_stock_changes', response);
+    return redis.publish('out_stock_changes', JSON.stringify(response));
   },
 
   replace_current_stock_with_new_stock: function replace_current_stock_with_new_stock(current_stock, new_stock) {
@@ -110,7 +110,7 @@ self = module.exports = {
     return self.create_new_stock_table(new_stock, stock_table)
     .then(function callback() {
       return Promise.join(
-        self.get_in_stock_changes(new_stock, current_stock)
+        self.get_in_stock_changes(current_stock, new_stock)
           .then(self.broadcast_in_stock_changes),
 
         self.get_out_stock_changes(current_stock, new_stock)
