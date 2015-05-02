@@ -17,4 +17,4 @@ worker:
   autorestart: always
   links:
     - "redis:redis"
-  command: npm cron
+  command: npm run cron

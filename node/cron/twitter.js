@@ -1,7 +1,13 @@
 'use strict';
 var Twit = require('twit');
 var Redis = require('ioredis');
-var r = new Redis();
+var r = new Redis({
+  // This is the default value of `retryStrategy`
+  retryStrategy: function callback(times) {
+    var delay = Math.min(times * 2, 2000);
+    return delay;
+  }
+});
 // var fs = require('fs');
 
 /**
