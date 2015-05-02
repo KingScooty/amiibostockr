@@ -1,6 +1,12 @@
 'use strict';
 var Redis = require('ioredis');
-var redis = new Redis();
+var redis = new Redis({
+  // This is the default value of `retryStrategy`
+  retryStrategy: function callback(times) {
+    var delay = Math.min(times * 2, 2000);
+    return delay;
+  }
+});
 // var diff = require('deep-diff').diff;
 
 // var redis = require('redis');
