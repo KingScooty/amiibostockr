@@ -90,7 +90,7 @@ describe('Redis', function() {
         });
 
         /*eslint-disable */
-        redis.__set__('redis.exists', redisMock);
+        redis.__set__('redis_store.exists', redisMock);
         /*eslint-enable */
       });
 
@@ -118,7 +118,7 @@ describe('Redis', function() {
         });
 
         /*eslint-disable */
-        redis.__set__('redis.exists', redisMock);
+        redis.__set__('redis_store.exists', redisMock);
         /*eslint-enable */
       });
 
