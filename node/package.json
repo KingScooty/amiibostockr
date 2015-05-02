@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "start": "nodemon ./bin/www",
+    "test": "./node_modules/.bin/mocha --reporter spec",
     "start": "node ./cron/index",
-    "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "dependencies": {
     "amazon-product-api": "git+https://github.com/KingScooty/amazon-product-api.git",

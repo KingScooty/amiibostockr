@@ -5,8 +5,16 @@ node:
     - "80:3000"
   links:
    - "redis:redis"
+
 redis:
     image: redis
     autorestart: always
     ports:
         - "6379:6379"
+
+worker:
+  image: kingscooty/amiibostockr
+  autorestart: always
+  links:
+    - "redis:redis"
+  command: npm cron
