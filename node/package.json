@@ -5,7 +5,7 @@
   "scripts": {
     "start": "nodemon ./bin/www",
     "test": "./node_modules/.bin/mocha --reporter spec",
-    "start": "node ./cron/index",
+    "cron": "node ./cron/index"
   },
   "dependencies": {
     "amazon-product-api": "git+https://github.com/KingScooty/amazon-product-api.git",
