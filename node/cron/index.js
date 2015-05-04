@@ -9,6 +9,8 @@ var r = new Redis();
 var job;
 var init;
 
+console.log('Initialising...');
+
 require('./twitter');
 
 /**
