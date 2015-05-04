@@ -41,6 +41,8 @@ r.on('message', function callback(channel, message) {
   // console.log(in_stock_message);
   r.hgetall('amazon:UK:product_table:' + in_stock_message[0]).then(function callback(response) {
     var data = JSON.parse(response);
+    console.log('Product in stock!', data);
+    console.log('Tweeting!');
     tweet(data.name, data.link, 'UK');
   });
 });
