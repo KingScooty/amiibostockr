@@ -59,6 +59,7 @@ self = module.exports = {
   },
 
   broadcast_in_stock_changes: function broadcast_in_stock_changes(response) {
+    console.log('In stock changes: ', response);
     return redis_pub.publish('in_stock_changes', JSON.stringify(response));
   },
 
