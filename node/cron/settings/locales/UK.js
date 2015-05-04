@@ -1,5 +1,15 @@
 var _ = require('lodash');
 
+/*
+
+  Script for grabbing latest codes from nowinstock.net
+
+  $('#data a[href^="http://www.amazon.co.uk"]').each(function(i, el) {
+    console.log($(el).attr('href'));
+  });
+
+ */
+
 var ASIN = [
   'B00Q6A57J2',
   'B00O9QCJFK',
