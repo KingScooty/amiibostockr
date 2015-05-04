@@ -66,10 +66,9 @@ job = new CronJob({
 
 init = function init() {
   console.log('Initialising...');
-  r.flushdb().then(function callback() {
-    console.log('Db flushed, starting job...');
-    job.start();
-  });
+  r.flushall();
+  console.log('Db flushed, starting job...');
+  job.start();
 };
 
 init();
