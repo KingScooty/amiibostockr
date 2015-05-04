@@ -138,15 +138,18 @@ var self = module.exports = {
     var new_payload = {};
 
     payload.map(function callback(product) {
-      new_payload[product.ASIN] = {
-        ASIN: _.first(product.ASIN),
-        url: _.first(product.DetailPageURL),
-        name: _.first(product.ItemAttributes[0].Edition),
-        title: _.first(product.ItemAttributes[0].Title),
-        date: _.first(product.ItemAttributes[0].ReleaseDate),
-        OffersSummary: JSON.stringify(product.OfferSummary),
-        Offers: JSON.stringify(product.Offers)
-      };
+      // console.log(product);
+      if (product && product.ASIN) {
+        new_payload[product.ASIN] = {
+          ASIN: _.first(product.ASIN),
+          url: _.first(product.DetailPageURL),
+          name: _.first(product.ItemAttributes[0].Edition),
+          title: _.first(product.ItemAttributes[0].Title),
+          date: _.first(product.ItemAttributes[0].ReleaseDate),
+          OffersSummary: JSON.stringify(product.OfferSummary),
+          Offers: JSON.stringify(product.Offers)
+        };
+      }
     });
 
     return new_payload;
