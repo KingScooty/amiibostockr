@@ -3,8 +3,11 @@ var CronJob = require('cron').CronJob;
 var amazon = require('./amazon');
 var redis = require('./redis');
 
-// var Redis = require('ioredis');
-// var r = new Redis();
+var Redis = require('ioredis');
+var r = new Redis();
+
+var job;
+var init;
 
 require('./twitter');
 
@@ -45,8 +48,7 @@ update stock table
 // var publisher = require('./publisher');
 
 //
-
-var job = new CronJob({
+job = new CronJob({
   cronTime: '*/20 * * * * *',
   onTick: function callback() {
     console.log('running cron');
@@ -59,4 +61,11 @@ var job = new CronJob({
   timeZone: 'Europe/London'
 });
 
-job.start();
+
+init = function init() {
+  r.flushall().then(function callback() {
+    job.start();
+  });
+};
+
+init();
