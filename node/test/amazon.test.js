@@ -102,6 +102,16 @@ describe('Query Amazon advertising API', function() {
     {'ASIN': 6},
     {'ASIN': 7},
     {'ASIN': 8},
+    {'ASIN': 9},
+    {'ASIN': 0},
+    {'ASIN': 1},
+    {'ASIN': 2},
+    {'ASIN': 3},
+    {'ASIN': 4},
+    {'ASIN': 5},
+    {'ASIN': 6},
+    {'ASIN': 7},
+    {'ASIN': 8},
     {'ASIN': 9}
   ];
 
@@ -127,14 +137,14 @@ describe('Query Amazon advertising API', function() {
       stub__query.restore();
     });
 
-    it('should call query() 4 times', function() {
+    it('should call query() 5 times', function() {
       amazon.batch_query('UK');
       assert.ok(stub__query.called);
-      assert.equal(stub__query.callCount, 4);
+      assert.equal(stub__query.callCount, 5);
     });
-    it('should return a flattened payload from running query() 4 times', function(done) {
+    it('should return a flattened payload from running query() 5 times', function(done) {
       amazon.batch_query('UK').then(function(payload) {
-        assert.equal(stub__query.callCount, 4);
+        assert.equal(stub__query.callCount, 5);
         assert.deepEqual(payload, expected);
         done();
       });
