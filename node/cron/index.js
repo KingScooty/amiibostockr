@@ -9,7 +9,7 @@ var r = new Redis();
 var job;
 var init;
 
-console.log('Initialising...');
+console.log('Running index...');
 
 require('./twitter');
 
@@ -65,6 +65,7 @@ job = new CronJob({
 
 
 init = function init() {
+  console.log('Initialising...');
   r.flushall().then(function callback() {
     console.log('Db flushed, starting job...');
     job.start();
