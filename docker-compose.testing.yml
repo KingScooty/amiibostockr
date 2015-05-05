@@ -1,3 +1,9 @@
+# redis:
+#   # image: redis
+#   build: ./redis
+#   ports:
+#     - "6379:6379"
+
 node:
   build: ./node
   # volumes:
@@ -10,9 +16,14 @@ node:
   net: "host"
 #
 #
-  links:
-   - redis
-redis:
-    build: ./redis
-    ports:
-      - "6379:6379"
+  # links:
+  #  - redis
+
+worker:
+  build: ./node
+  # volumes:
+  #   - "./node:/usr/src/app"
+  # links:
+  #   - redis
+  net: "host"
+  command: npm run cron

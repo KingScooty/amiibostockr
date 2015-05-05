@@ -1,9 +1,22 @@
+'use strict';
+
 var _ = require('lodash');
 var diff = require('deep-diff').diff;
 
-exports.flattenJSON = function (payload) {
+exports.flattenJSON = function flattenJSON(payload) {
   return _.flatten(payload);
-}
+};
+
+exports.determineHost = function determineHost() {
+  var host;
+  if (process.env.NODE_ENV === 'production') {
+    host = 'redis';
+  } else {
+    // host: 'amiibostockr_redis_1',
+    host = 'localhost';
+  }
+  return host;
+};
 
 /**
  EXAMPLE RESPONSE:
@@ -15,6 +28,6 @@ exports.flattenJSON = function (payload) {
 
 */
 
-exports.diffTable = function (lhs, rhs) {
- return diff(lhs, rhs);
-}
+exports.diffTable = function diffTable(lhs, rhs) {
+  return diff(lhs, rhs);
+};

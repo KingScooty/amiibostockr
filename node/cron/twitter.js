@@ -1,7 +1,10 @@
 'use strict';
 var Twit = require('twit');
 var Redis = require('ioredis');
+var determineHost = require('./utils').determineHost;
+
 var r = new Redis({
+  host: determineHost(),
   // This is the default value of `retryStrategy`
   retryStrategy: function callback(times) {
     var delay = Math.min(times * 2, 2000);
@@ -37,9 +40,12 @@ function tweet(name, link, locale) {
 
 r.on('message', function callback(channel, message) {
   var in_stock_message = JSON.parse(message);
+  console.log('twitter r.on message: ', message);
+  console.log('twitter in stock message: ', in_stock_message);
   // console.log('Broadcast:');
   // console.log(in_stock_message);
-  r.hgetall('amazon:UK:product_table:' + in_stock_message[0]).then(function callback(response) {
+  r.hgetall('amazon:UK:product_table:' + in_stock_message[0])
+  .then(function callback(response) {
     var data = JSON.parse(response);
     console.log('Product in stock!', data);
     console.log('Tweeting!');
