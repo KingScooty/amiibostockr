@@ -7,7 +7,7 @@ node:
 # http://tech.playlab.com/2015/02/25/running-rspec-docker-circleci.html
 # This uses the same interface for the container and the host, thus making all
 # services listening on localhost available.
-  net: "host"
+  # net: "host"
 #
 #
   links:
@@ -24,5 +24,5 @@ worker:
   #   - "./node:/usr/src/app"
   links:
     - redis
-  net: "host"
+  # net: "host"
   command: npm run cron
