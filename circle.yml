@@ -12,7 +12,8 @@ dependencies:
 test:
   override:
     # - docker-compose -f testing.yml run --no-deps node npm test
-    - docker-compose -f docker-compose.testing.yml run --no-deps node npm test
+    # - docker-compose -f docker-compose.testing.yml run --no-deps node npm test
+    - docker-compose -f docker-compose.testing.yml worker run node npm test
 
 general:
   branches:
