@@ -1,17 +1,7 @@
 'use strict';
 var Twit = require('twit');
 var Redis = require('ioredis');
-
-var determineHost = function determineHost() {
-  var host;
-  if (process.env.NODE_ENV === 'production') {
-    host = 'redis';
-  } else {
-    // host: 'amiibostockr_redis_1',
-    host = 'localhost';
-  }
-  return host;
-};
+var determineHost = require('./utils').determineHost;
 
 var r = new Redis({
   host: determineHost(),
