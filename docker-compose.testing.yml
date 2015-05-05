@@ -1,7 +1,8 @@
 redis:
-    build: ./redis
-    ports:
-      - "6379:6379"
+  image: redis
+  # build: ./redis
+  ports:
+    - "6379:6379"
 
 node:
   build: ./node
