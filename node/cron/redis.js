@@ -1,6 +1,17 @@
 'use strict';
 var Redis = require('ioredis');
+
 var redis_store = new Redis({
+  host: function determineHost() {
+    var host;
+    if (process.env.NODE_ENV === 'production') {
+      host = 'redis';
+    } else {
+      // host: 'amiibostockr_redis_1',
+      host: 'localhost'
+    }
+    return host;
+  },
   // This is the default value of `retryStrategy`
   retryStrategy: function callback(times) {
     var delay = Math.min(times * 2, 2000);
@@ -68,7 +79,7 @@ self = module.exports = {
   },
 
   broadcast_out_stock_changes: function broadcast_out_stock_changes(response) {
-    console.log('broadcast out stock: ', response);
+    console.log('broadcast out stock changes: ', response);
     return redis_pub.publish('out_stock_changes', JSON.stringify(response));
   },
 
