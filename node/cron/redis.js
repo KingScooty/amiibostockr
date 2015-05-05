@@ -151,16 +151,16 @@ self = module.exports = {
     var key1 = store + ':' + locale + ':stock_table';
     var first_product_key = Object.keys(product_table)[0];
     var key2 = store + ':' + locale + ':product_table:' + first_product_key;
-    console.log('key2: ', key2);
+    // console.log('key2: ', key2);
 
-    console.log('Checking table existence...');
+    // console.log('Checking table existence...');
     // return Promise.all([redis_store.exists(key1), redis_store.exists(key2)]).then(function callback(response) {
     return Promise.join(
       redis_store.exists(key1),
       redis_store.exists(key2)
     )
     .then(function callback(response) {
-      console.log('0: Then promise. Response: ', response, response[0], response[1]);
+      // console.log('0: Then promise. Response: ', response, response[0], response[1]);
       if ((response[0] === 0) || (response[1] === 0)) {
         if (response[0] === 0) {
           console.log('1st: Populate stock table');
@@ -171,7 +171,7 @@ self = module.exports = {
           self.populate_product_table(store, locale, product_table);
         }
       } else {
-        console.log('After: Update stock table');
+        // console.log('After: Update stock table');
         self.update_stock_table();
       }
     });

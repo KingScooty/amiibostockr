@@ -3,8 +3,8 @@ var CronJob = require('cron').CronJob;
 var amazon = require('./amazon');
 var redis = require('./redis');
 
-var Redis = require('ioredis');
-var r = new Redis();
+// var Redis = require('ioredis');
+// var r = new Redis();
 
 var job;
 var init;
