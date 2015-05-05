@@ -53,7 +53,7 @@ update stock table
 job = new CronJob({
   cronTime: '*/20 * * * * *',
   onTick: function callback() {
-    console.log('running cron');
+    // console.log('running cron');
     amazon.init('UK').then(function callback(response) {
       redis.process_data(response);
     });
@@ -66,8 +66,8 @@ job = new CronJob({
 
 init = function init() {
   console.log('Initialising...');
-  r.flushall();
-  console.log('Db flushed, starting job...');
+  // r.flushall();
+  // console.log('Db flushed, starting job...');
   job.start();
 };
 
