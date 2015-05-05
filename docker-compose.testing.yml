@@ -16,14 +16,14 @@ node:
   net: "host"
 #
 #
-  links:
-   - redis
+  # links:
+  #  - redis
 
 worker:
   build: ./node
   # volumes:
   #   - "./node:/usr/src/app"
-  links:
-    - redis
+  # links:
+  #   - redis
   net: "host"
   command: npm run cron
