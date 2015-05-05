@@ -14,7 +14,7 @@ var determineHost = function determineHost() {
 };
 
 var r = new Redis({
-  host: determineHost,
+  host: determineHost(),
   // This is the default value of `retryStrategy`
   retryStrategy: function callback(times) {
     var delay = Math.min(times * 2, 2000);
