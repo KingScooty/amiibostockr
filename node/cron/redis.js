@@ -135,15 +135,20 @@ self = module.exports = {
     var key1 = store + ':' + locale + 'stock_table';
     var key2 = store + ':' + locale + 'product_table';
 
+    console.log('Checking table existence...');
     return Promise.all([redis_store.exists(key1), redis_store.exists(key2)]).then(function callback(response) {
+      console.log('0: Then promise.');
       if ((response[0] === 0) || (response[1] === 0)) {
         if (response[0] === 0) {
+          console.log('1st: Populate stock table');
           self.populate_stock_table(store, locale, stock_table);
         }
         if (response[1] === 0) {
+          console.log('1st: Populate product table');
           self.populate_product_table(store, locale, product_table);
         }
       } else {
+        console.log('After: Update stock table');
         self.update_stock_table();
       }
     });
