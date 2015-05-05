@@ -13,7 +13,7 @@ test:
   override:
     # - docker-compose -f testing.yml run --no-deps node npm test
     # - docker-compose -f docker-compose.testing.yml run --no-deps node npm test
-    - docker-compose -f docker-compose.testing.yml run worker node npm test
+    -  docker-compose -f docker-compose.testing.yml run worker npm test
 
 general:
   branches:

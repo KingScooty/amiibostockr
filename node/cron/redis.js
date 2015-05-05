@@ -59,7 +59,7 @@ self = module.exports = {
   },
 
   broadcast_in_stock_changes: function broadcast_in_stock_changes(response) {
-    console.log('In stock changes: ', response);
+    console.log('broadcast in stock changes: ', response);
     return redis_pub.publish('in_stock_changes', JSON.stringify(response));
   },
 
@@ -68,6 +68,7 @@ self = module.exports = {
   },
 
   broadcast_out_stock_changes: function broadcast_out_stock_changes(response) {
+    console.log('broadcast out stock: ', response);
     return redis_pub.publish('out_stock_changes', JSON.stringify(response));
   },
 
@@ -90,10 +91,21 @@ self = module.exports = {
     .then(function callback() {
       return Promise.join(
         self.get_in_stock_changes(current_stock, new_stock)
-          .then(self.broadcast_in_stock_changes),
+          .then(function callback(response) {
+            // console.log('what the fuck is the length of response?');
+            // console.log(response);
+            // console.log(response.lenght);
+            if (response.length !== 0) {
+              self.broadcast_in_stock_changes(response);
+            }
+          }),
 
         self.get_out_stock_changes(current_stock, new_stock)
-          .then(self.broadcast_out_stock_changes)
+          .then(function callback(response) {
+            if (response.length !== 0) {
+              self.broadcast_out_stock_changes(response);
+            }
+          })
       );
     })
     .then(function callback() {
@@ -132,12 +144,19 @@ self = module.exports = {
     var stock_table = payload.in_stock_table;
     var product_table = payload.product_table;
 
-    var key1 = store + ':' + locale + 'stock_table';
-    var key2 = store + ':' + locale + 'product_table';
+    var key1 = store + ':' + locale + ':stock_table';
+    var first_product_key = Object.keys(product_table)[0];
+    var key2 = store + ':' + locale + ':product_table:' + first_product_key;
+    console.log('key2: ', key2);
 
     console.log('Checking table existence...');
-    return Promise.all([redis_store.exists(key1), redis_store.exists(key2)]).then(function callback(response) {
-      console.log('0: Then promise.');
+    // return Promise.all([redis_store.exists(key1), redis_store.exists(key2)]).then(function callback(response) {
+    return Promise.join(
+      redis_store.exists(key1),
+      redis_store.exists(key2)
+    )
+    .then(function callback(response) {
+      console.log('0: Then promise. Response: ', response, response[0], response[1]);
       if ((response[0] === 0) || (response[1] === 0)) {
         if (response[0] === 0) {
           console.log('1st: Populate stock table');
