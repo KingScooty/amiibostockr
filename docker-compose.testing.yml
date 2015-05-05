@@ -1,3 +1,8 @@
+redis:
+    build: ./redis
+    ports:
+      - "6379:6379"
+
 node:
   build: ./node
   # volumes:
@@ -12,11 +17,6 @@ node:
 #
   links:
    - redis
-
-redis:
-    build: ./redis
-    ports:
-      - "6379:6379"
 
 worker:
   build: ./node
