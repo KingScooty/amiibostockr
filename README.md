@@ -9,7 +9,7 @@
 5. Once built, trigger deploy on Tutum to Digital Ocean.
 
 ##Current live link:
-http://382c2958-kingscooty.node.tutum.io
+http://amiibostockr.com
 
 ##Development Journey
 
@@ -18,7 +18,7 @@ http://382c2958-kingscooty.node.tutum.io
 
 - Update stock table in redis
 - Store product response as meta for site.
-- Cross check stock with product table 
+- Cross check stock with product table
 
 ##Tabgs
 ###UK Id's - tag1
