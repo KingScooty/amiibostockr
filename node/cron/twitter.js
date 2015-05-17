@@ -18,10 +18,10 @@ var r = new Redis({
  */
 
 var T = new Twit({
-  consumer_key: 'jlA7DILS4ptyFhYeKi4Q6Nyvg',
-  consumer_secret: 'ff7GtK7xlesqTSos0FFjNH5O0QxBkOCpzLgcRQABick0fWmg5R',
-  access_token: '3158926131-lV92fP4XNKlifJTPxcwCU49g0ka9U3ZLK0EpSte',
-  access_token_secret: '6DIRiHcG0KoGMj81cQ0HszBbFX5KIGsfIiYXqphRikPtK'
+  consumer_key: process.env.CONSUMER_KEY,
+  consumer_secret: process.env.CONSUMER_SECRET,
+  access_token: process.env.ACCESS_TOKEN,
+  access_token_secret: process.env.ACCESS_TOKEN_SECRET
 });
 
 r.subscribe('in_stock_changes');
